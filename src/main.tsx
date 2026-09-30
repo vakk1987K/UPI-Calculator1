@@ -919,7 +919,6 @@ export function App() {
           </div>
 
           {/* ULTRA-PROMINENT FORMULA STRIP (As strongly recommended by User) */}
-          {/* "Customer pays: ₹10,000 | Customer MDR: ₹0 | Merchant MDR: ₹40 | Standard P2M — 0.4%" */}
           <div className="rounded-2xl border-2 border-emerald-600 bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-950 p-4 text-white shadow-md">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm">
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 font-bold">
