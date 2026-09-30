@@ -10,6 +10,7 @@ export type SupportedLanguage = 'en' | 'te';
 
 export type PaymentInstrument =
   | 'bank_account' // Standard Bank-to-Bank Account UPI
+  | 'rupay_credit_card' // RuPay Credit Card linked on UPI (NPCI Circular)
   | 'ppi_wallet'; // Prepaid Payment Instruments (Paytm Wallet, PhonePe Wallet, PPI on UPI)
 
 export type MerchantCategoryKey =
@@ -28,6 +29,15 @@ export interface MerchantCategoryConfig {
   typicalExamplesTe: string;
 }
 
+export interface PaymentInstrumentConfig {
+  key: PaymentInstrument;
+  labelEn: string;
+  labelTe: string;
+  shortDescEn: string;
+  shortDescTe: string;
+  regulatoryNoteEn: string;
+}
+
 export interface UpiRegulatoryRule {
   id: string;
   titleEn: string;
@@ -39,7 +49,7 @@ export interface UpiRegulatoryRule {
   merchantCategory?: MerchantCategoryKey;
   threshold: number; // e.g. 2000 INR
   rateBelowOrEqualThreshold: number; // Decimal (0.0 = 0%)
-  rateAboveThreshold: number; // Decimal (e.g. 0.004 = 0.40%, 0.0002 = 0.02%, 0.011 = 1.10%)
+  rateAboveThreshold: number; // Decimal (e.g. 0.004 = 0.40%, 0.0002 = 0.02%, 0.02 = 2.0%)
   isFlatFee?: boolean; // True if statutory flat fee (e.g. ₹5 for essential sectors)
   flatFeeAmount?: number; // Flat fee in INR (e.g. 5)
   maximumMdrCap: number | null; // Cap in INR (e.g. 300 or null)
@@ -54,7 +64,7 @@ export interface UpiRegulatoryRule {
 }
 
 export interface CalculationInput {
-  amount: number;
+  amount: number | string;
   transactionType: TransactionType;
   paymentInstrument?: PaymentInstrument;
   merchantCategory?: MerchantCategoryKey;
@@ -63,22 +73,27 @@ export interface CalculationInput {
 
 export interface CalculationResult {
   amount: number;
+  formattedAmount: string;
   transactionType: TransactionType;
   paymentInstrument: PaymentInstrument;
+  paymentInstrumentLabelEn: string;
   merchantCategory?: MerchantCategoryKey;
   merchantCategoryLabelEn?: string;
   merchantCategoryLabelTe?: string;
-  customerCharge: number; // 0
+  customerCharge: number; // ALWAYS 0
   customerTotalPays: number;
   applicableMdrRatePercent: number;
   rawMdrAmount: number;
   estimatedMdr: number;
+  formulaText: string;
   isFlatFee: boolean;
   flatFeeAmount: number;
   mdrCapApplied: boolean;
   mdrCapAmount: number | null;
   estimatedMerchantSettlement: number;
   isMdrApplicable: boolean;
+  whoBearsFeeEn: string;
+  whoBearsFeeTe: string;
   appliedRuleId: string;
   ruleEffectiveFrom: string;
   ruleEffectiveUntil: string | null;
@@ -86,13 +101,15 @@ export interface CalculationResult {
   explanationEn: string;
   explanationTe: string;
   sourceNotice: string;
+  validationWarning?: string;
 }
 
 export interface MerchantProjectionInput {
-  averageAmount: number;
-  dailyTransactions: number;
-  businessDaysPerMonth: number;
+  averageAmount: number | string;
+  dailyTransactions: number | string;
+  businessDaysPerMonth: number | string;
   merchantCategory: MerchantCategoryKey;
+  paymentInstrument?: PaymentInstrument;
   evaluationDate?: string;
 }
 

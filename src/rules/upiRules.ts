@@ -2,7 +2,7 @@
  * Central Regulatory Configuration for UPI MDR Rules
  * Sourced strictly from:
  * 1. Reserve Bank of India (RBI)
- * 2. National Payments Corporation of India (NPCI) Circulars
+ * 2. National Payments Corporation of India (NPCI) Circulars (including RuPay Credit Card on UPI & PPI guidelines)
  * 3. Department of Financial Services (DFS), Ministry of Finance, Government of India
  * 4. Press Information Bureau (PIB), Government of India
  *
@@ -14,6 +14,7 @@ import {
   MerchantCategoryConfig,
   MerchantCategoryKey,
   PaymentInstrument,
+  PaymentInstrumentConfig,
   TransactionType,
   UpiRegulatoryRule,
 } from '../types/upi';
@@ -24,20 +25,52 @@ export const UPI_REGULATORY_META = {
   futureEffectiveDate: '2026-10-15',
   sources: 'Reserve Bank of India (RBI) / National Payments Corporation of India (NPCI) / Ministry of Finance (DFS) / PIB',
   sourcesTe: 'భారత రిజర్వ్ బ్యాంక్ (RBI) / NPCI / ఆర్థిక మంత్రిత్వ శాఖ (DFS) / PIB',
+  educationalDisclaimerEn:
+    'This calculator is an independent simulation tool for educational and informational purposes. Actual charges may vary based on merchant category code (MCC), acquiring bank/payment aggregator agreements, payment instrument used, and operational circulars issued by NPCI and RBI. It is not an official tool of RBI, NPCI, or the Government of India.',
+  educationalDisclaimerTe:
+    'ఈ కాలిక్యులేటర్ విద్యా మరియు సమాచార ప్రయోజనాల కోసం మాత్రమే రూపొందించబడిన స్వతంత్ర సాధనం. వాస్తవ ఛార్జీలు వ్యాపారి కేటగిరీ (MCC), బ్యాంక్ లేదా పేమెంట్ గేట్‌వే ఒప్పందాలు మరియు NPCI/RBI సర్క్యులర్ల ప్రకారం మారవచ్చు. ఇది RBI, NPCI లేదా భారత ప్రభుత్వ అధికారిక సాధనం కాదు.',
   disclaimerEn:
-    'UPI MDR is a merchant-side payment ecosystem fee and is strictly prohibited from being passed to customers (Sec 10A PSS Act). Sourced from official RBI/NPCI notifications.',
+    'This calculator is an independent simulation tool for educational and informational purposes. Sourced from official RBI/NPCI notifications.',
   disclaimerTe:
-    'UPI MDR అనేది వ్యాపారి చెల్లించాల్సిన రుసుము. దీనిని కస్టమర్లపై విధించడం చట్టరీత్యా నేరం. అధికారిక RBI/NPCI మార్గదర్శకాల ప్రకారం రూపొందించబడింది.',
+    'ఈ కాలిక్యులేటర్ విద్యా మరియు సమాచార ప్రయోజనాల కోసం మాత్రమే రూపొందించబడిన స్వతంత్ర సాధనం.',
+  officialCircularsUrl: 'https://www.npci.org.in/what-we-do/upi/circulars',
   officialLinks: [
-    { label: 'NPCI UPI Circulars', url: 'https://www.npci.org.in/' },
-    { label: 'Department of Financial Services (DFS) FAQ', url: 'https://financialservices.gov.in/' },
+    { label: 'NPCI UPI Circulars (Official Listing)', url: 'https://www.npci.org.in/what-we-do/upi/circulars' },
+    { label: 'Department of Financial Services (DFS) MDR FAQ', url: 'https://financialservices.gov.in/' },
     { label: 'Government/PIB UPI MDR Explanation', url: 'https://pib.gov.in/' },
   ],
   independentStatementEn:
-    'This is an independent calculator and is not affiliated with RBI, NPCI or the Government of India.',
+    'This is an independent tool and is not affiliated with, endorsed by, or operated by RBI, NPCI or the Government of India.',
   independentStatementTe:
-    'ఇది ఒక స్వతంత్ర కాలిక్యులేటర్ మరియు RBI, NPCI లేదా భారత ప్రభుత్వంతో ఎటువంటి అధికారಿಕ సంబంధం లేదు.',
+    'ఇది ఒక స్వతంత్ర సాధనం మరియు RBI, NPCI లేదా భారత ప్రభుత్వంతో ఎటువంటి అధికారిక సంబంధం లేదా ఆమోదం లేదు.',
 };
+
+export const PAYMENT_INSTRUMENTS: PaymentInstrumentConfig[] = [
+  {
+    key: 'bank_account',
+    labelEn: 'Bank Account UPI (Standard)',
+    labelTe: 'బ్యాంక్ ఖాతా UPI (సాధారణం)',
+    shortDescEn: 'Direct bank-to-bank UPI via Google Pay, PhonePe, Paytm, BHIM, etc.',
+    shortDescTe: 'బ్యాంక్ నుండి నేరుగా బ్యాంక్‌కు బదిలీ (Google Pay, PhonePe, Paytm, BHIM).',
+    regulatoryNoteEn: '≤ ₹2,000 is 100% Free. Above ₹2,000: 0.40% on standard P2M (capped at ₹300), flat ₹5 on essential services, 0% on P2PM small merchants.',
+  },
+  {
+    key: 'rupay_credit_card',
+    labelEn: 'RuPay Credit Card on UPI',
+    labelTe: 'రూపే క్రెడిట్ కార్డ్ UPI (RuPay CC)',
+    shortDescEn: 'Credit card linked to UPI app (NPCI Circular on RuPay CC on UPI).',
+    shortDescTe: 'UPI యాప్‌కు లింక్ చేయబడిన రూపే క్రెడిట్ కార్డ్ (NPCI నిబంధనలు).',
+    regulatoryNoteEn: 'Nil MDR (0%) for transactions up to ₹2,000 & small offline merchants. For > ₹2,000 at regular merchants, standard credit card MDR (~2.0%) applies. Customer fee is strictly ₹0.',
+  },
+  {
+    key: 'ppi_wallet',
+    labelEn: 'Prepaid Wallet / PPI on UPI',
+    labelTe: 'వాలెట్ / PPI UPI (Paytm/PhonePe Wallet)',
+    shortDescEn: 'Wallet balance scanned on merchant QR (NPCI PPI Interchange Circular).',
+    shortDescTe: 'వ్యాపారి QR కోడ్ వద్ద వాలెట్ బ్యాలెన్స్ ద్వారా చెల్లింపు.',
+    regulatoryNoteEn: '0% fee for transactions ≤ ₹2,000 and offline small merchants. Up to 1.10% interchange for regular merchants > ₹2,000. Customer fee is ₹0.',
+  },
+];
 
 export const MERCHANT_CATEGORIES: MerchantCategoryConfig[] = [
   {
@@ -74,13 +107,13 @@ export const MERCHANT_CATEGORIES: MerchantCategoryConfig[] = [
     descriptionEn: 'Mutual funds investments, securities, stockbrokers and authorized depository dealers.',
     descriptionTe: 'మ్యూచువల్ ఫండ్ పెట్టుబడులు, స్టాక్ బ్రోకర్లు, సెక్యూరిటీస్ కొనుగోళ్లు.',
     typicalExamplesEn: 'Mutual fund investments, stock trading apps, AMC subscriptions',
-    typicalExamplesTe: 'మ్యూచువಲ್ ఫండ్స్, డిమాట్ ట్రేడింగ్, షేర్ బ్రోకర్లు',
+    typicalExamplesTe: 'మ్యూచువల్ ఫండ్స్, డిమాట్ ట్రేడింగ్, షేర్ బ్రోకర్లు',
   },
 ];
 
 export const UPI_RULES: UpiRegulatoryRule[] = [
   // -------------------------------------------------------------
-  // PATH 1: PERSON TO PERSON (P2P) - Always ₹0 MDR across all dates
+  // PATH 1: PERSON TO PERSON (P2P) - Always ₹0 MDR across all dates & instruments
   // -------------------------------------------------------------
   {
     id: 'p2p_active_rule',
@@ -172,7 +205,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: '0% MDR active under Ministry of Finance zero-MDR directive.',
     ruleSummaryTe: 'ఆర్థిక మంత్రిత్వ శాఖ జీరో-MDR ఉత్తర్వుల ప్రకారం 0% MDR.',
     reasonEn: 'Under the current rules until 14 October 2026, standard bank UPI has 0% MDR.',
-    reasonTe: '14 అక్టోబర్ 2026 వరకు ప్రామాణಿಕ బ్యాంక్ UPI కి 0% MDR వర్తిస్తుంది.',
+    reasonTe: '14 అక్టోబర్ 2026 వరకు ప్రామాణిక బ్యాంక్ UPI కి 0% MDR వర్తిస్తుంది.',
   },
   {
     id: 'current_bank_capital_markets',
@@ -221,7 +254,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: 'Up to ₹2,000: ₹0. Above ₹2,000: 0.40% capped at ₹300.',
     ruleSummaryTe: '₹2,000 వరకు ₹0. ₹2,000 దాటితే 0.40% (గరిష్ట పరిమితి ₹300).',
     reasonEn:
-      'Effective 15 October 2026: Transactions up to ₹2,000 are 0% MDR. Above ₹2,000, MDR is 0.40% on entire amount, capped at ₹300 for ₹75,000 and above. Customer fee is ₹0.',
+      'Effective 15 October 2026: Transactions up to ₹2,000 are 0% MDR. Above ₹2,000, MDR is 0.40% on entire amount, capped at ₹300 for ₹75,000 and above. Customer fee is strictly ₹0.',
     reasonTe:
       '15 అక్టోబర్ 2026 నుండి: ₹2,000 వరకు 0% MDR. ₹2,000 మించినప్పుడు పూర్తి మొత్తంపై 0.40% MDR, ₹75,000 దాటినప్పుడు గరిష్ట పరిమితి ₹300. కస్టమర్ ఛార్జ్ ₹0.',
   },
@@ -249,7 +282,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: 'Up to ₹2,000: ₹0. Above ₹2,000: Flat ₹5 MDR.',
     ruleSummaryTe: '₹2,000 వరకు ₹0. ₹2,000 దాటితే ఫ్లాట్ ₹5 MDR.',
     reasonEn:
-      'Effective 15 October 2026: Railways, telecom, fuel, insurance, and utilities have a flat ₹5 MDR for transactions exceeding ₹2,000. Customer fee is ₹0.',
+      'Effective 15 October 2026: Railways, telecom, fuel, insurance, and utilities have a flat ₹5 MDR for transactions exceeding ₹2,000. Customer fee is strictly ₹0.',
     reasonTe:
       '15 అక్టోబర్ 2026 నుండి: రైల్వేలు, టెలికాం, పెట్రోల్/డీజిల్, ఇన్సూరెన్స్ రంగాలకు ₹2,000 దాటిన లావాదేవీలపై ఫ్లాట్ ₹5 MDR వర్తిస్తుంది. కస్టమర్ ఛార్జ్ ₹0.',
   },
@@ -275,7 +308,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: 'Up to ₹2,000: ₹0. Above ₹2,000: 0.02% capped at ₹300.',
     ruleSummaryTe: '₹2,000 వరకు ₹0. ₹2,000 దాటితే 0.02% (గరిష్ట పరిమితి ₹300).',
     reasonEn:
-      'Effective 15 October 2026: Mutual funds, securities, and stockbrokers have a concessional 0.02% MDR, capped at ₹300. Customer fee is ₹0.',
+      'Effective 15 October 2026: Mutual funds, securities, and stockbrokers have a concessional 0.02% MDR, capped at ₹300. Customer fee is strictly ₹0.',
     reasonTe:
       '15 అక్టోబర్ 2026 నుండి: మ్యూచువల్ ఫండ్స్, షేర్లు మరియు సెక్యూరిటీస్ చెల్లింపులకు 0.02% MDR వర్తిస్తుంది (గరిష్ట పరిమితి ₹300). కస్టమర్ ఛార్జ్ ₹0.',
   },
@@ -301,9 +334,109 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: '0% MDR for qualifying small merchants receiving up to ₹1 Lakh/month under P2PM QR.',
     ruleSummaryTe: 'P2PM QR కింద నెలకు ₹1 లక్ష వరకు లావాదేవీలు పొందే చిన్న వ్యాపారులకు 0% పూర్తి ఉచితం.',
     reasonEn:
-      'Qualifying small merchants receiving up to ₹1 Lakh per month via UPI QR under P2PM continue to get 0% MDR on all transactions.',
+      'Qualifying small merchants receiving up to ₹1 Lakh per month via UPI QR under P2PM continue to get 0% MDR on all transactions. Customer fee is strictly ₹0.',
     reasonTe:
-      'P2PM నిబంధనల ప్రకారం నెలకు ₹1 లక్ష వరకు UPI QR చెల్లింపులు అందుకునే చిన్న వ్యాపారులకు అన్ని లావాదేవీలపై 0% MDR (పూర్తి ఉచితం).',
+      'P2PM నిబంధనల ప్రకారం నెలకు ₹1 లక్ష వరకు UPI QR చెల్లింపులు అందుకునే చిన్న వ్యాపారులకు అన్ని లావాదేవీలపై 0% MDR (పూర్తి ఉచితం). కస్టమర్ ఛార్జ్ ₹0.',
+  },
+
+  // -------------------------------------------------------------
+  // RUPAY CREDIT CARD ON UPI (NPCI Circular on RuPay CC on UPI)
+  // -------------------------------------------------------------
+  {
+    id: 'rupay_cc_small_merchant',
+    titleEn: 'RuPay CC on UPI - Small Merchant / Offline QR',
+    titleTe: 'రూపే క్రెడిట్ కార్డ్ UPI - చిన్న వ్యాపారి',
+    effectiveFrom: '2022-10-01',
+    effectiveUntil: null,
+    transactionType: 'P2M',
+    paymentInstrument: 'rupay_credit_card',
+    merchantCategory: 'small_merchant',
+    threshold: 2000,
+    rateBelowOrEqualThreshold: 0,
+    rateAboveThreshold: 0,
+    maximumMdrCap: null,
+    customerCharge: 0,
+    isExempt: true,
+    source: 'NPCI Circular on RuPay Credit Card on UPI (Nil MDR for Small Offline Merchants)',
+    sourceDate: 'October 2022 onwards',
+    ruleSummaryEn: 'Nil MDR (0%) for qualifying small offline merchants on RuPay Credit Card on UPI.',
+    ruleSummaryTe: 'చిన్న వ్యాపారులకు రూపే క్రెడిట్ కార్డ్ UPI చెల్లింపులపై 0% MDR (పూర్తి ఉచితం).',
+    reasonEn:
+      'As per NPCI guidelines for RuPay Credit Card on UPI, small merchants receiving payments on UPI QR are exempt from MDR (0% Nil MDR). Customer fee is strictly ₹0.',
+    reasonTe:
+      'NPCI మార్గదర్శకాల ప్రకారం, UPI QR ద్వారా చెల్లింపులు స్వీకరించే చిన్న వ్యాపారులకు రూపే క్రెడిట్ కార్డ్ చెల్లింపులపై 0% Nil MDR వర్తిస్తుంది. కస్టమర్‌పై ఎలాంటి ఛార్జీ ఉండదు.',
+  },
+  {
+    id: 'rupay_cc_regular_merchant',
+    titleEn: 'RuPay CC on UPI - Normal Merchant',
+    titleTe: 'రూపే క్రెడిట్ కార్డ్ UPI - సాధారణ వ్యాపారి',
+    effectiveFrom: '2022-10-01',
+    effectiveUntil: null,
+    transactionType: 'P2M',
+    paymentInstrument: 'rupay_credit_card',
+    merchantCategory: 'regular_merchant',
+    threshold: 2000,
+    rateBelowOrEqualThreshold: 0, // Nil MDR up to ₹2,000 as per NPCI circular!
+    rateAboveThreshold: 0.02, // 2.0% standard credit card MDR above ₹2,000
+    maximumMdrCap: null,
+    customerCharge: 0,
+    isExempt: false,
+    source: 'NPCI Circular on RuPay Credit Card on UPI (Nil MDR ≤ ₹2,000; Standard CC MDR > ₹2,000)',
+    sourceDate: 'October 2022 onwards',
+    ruleSummaryEn: 'Up to ₹2,000: Nil MDR (0%). Above ₹2,000: Standard ~2.0% Credit Card MDR applies to merchant.',
+    ruleSummaryTe: '₹2,000 వరకు Nil MDR (0%). ₹2,000 దాటితే సాధారణ ~2.0% క్రెడిట్ కార్డ్ MDR వ్యాపారికి వర్తిస్తుంది.',
+    reasonEn:
+      'Under NPCI RuPay-credit-card-on-UPI rules, transactions up to ₹2,000 have Nil MDR (0%). For transactions exceeding ₹2,000 at normal merchants, standard credit card MDR (~2.0%) is deducted from the merchant payout. Crucially, customer charge is strictly ₹0.',
+    reasonTe:
+      'NPCI నిబంధనల ప్రకారం రూపే క్రెడిట్ కార్డ్ లావాదేవీలకు ₹2,000 వరకు Nil MDR (0%). ₹2,000 దాటినప్పుడు వ్యాపారికి ~2.0% MDR కట్ అవుతుంది. కస్టమర్ ఎటువంటి అదనపు రుసుము చెల్లించరు (కస్టమర్ ఛార్జ్ ₹0).',
+  },
+  {
+    id: 'rupay_cc_essential_services',
+    titleEn: 'RuPay CC on UPI - Essential Services & Fuel',
+    titleTe: 'రూపే క్రెడిట్ కార్డ్ UPI - నిత్యావసరాలు & ఇంధనం',
+    effectiveFrom: '2022-10-01',
+    effectiveUntil: null,
+    transactionType: 'P2M',
+    paymentInstrument: 'rupay_credit_card',
+    merchantCategory: 'essential_services',
+    threshold: 2000,
+    rateBelowOrEqualThreshold: 0,
+    rateAboveThreshold: 0.015, // 1.5% concessional credit card MDR
+    maximumMdrCap: null,
+    customerCharge: 0,
+    isExempt: false,
+    source: 'NPCI Circular on RuPay Credit Card on UPI (Special Category Interchange)',
+    sourceDate: 'October 2022 onwards',
+    ruleSummaryEn: 'Up to ₹2,000: Nil MDR (0%). Above ₹2,000: ~1.5% concessional CC MDR.',
+    ruleSummaryTe: '₹2,000 వరకు 0%. ₹2,000 దాటితే ~1.5% రాయితీ MDR.',
+    reasonEn:
+      'Transactions up to ₹2,000 have Nil MDR (0%). Above ₹2,000, concessional CC MDR (~1.5%) applies to the merchant. Customer pays strictly ₹0 extra.',
+    reasonTe:
+      '₹2,000 వరకు 0% ఫీజు. ₹2,000 దాటితే రాయితీ MDR (~1.5%) వ్యాపారికి వర్తిస్తుంది. కస్టమర్‌కు ఎలాంటి అదనపు రుసుము ఉండదు.',
+  },
+  {
+    id: 'rupay_cc_capital_markets',
+    titleEn: 'RuPay CC on UPI - Capital Markets',
+    titleTe: 'రూపే క్రెడిట్ కార్డ్ UPI - క్యాపిటల్ మార్కెట్లు',
+    effectiveFrom: '2022-10-01',
+    effectiveUntil: null,
+    transactionType: 'P2M',
+    paymentInstrument: 'rupay_credit_card',
+    merchantCategory: 'capital_markets',
+    threshold: 2000,
+    rateBelowOrEqualThreshold: 0,
+    rateAboveThreshold: 0.02,
+    maximumMdrCap: null,
+    customerCharge: 0,
+    isExempt: false,
+    source: 'NPCI Circular on RuPay Credit Card on UPI',
+    sourceDate: 'October 2022 onwards',
+    ruleSummaryEn: 'Up to ₹2,000: Nil MDR (0%). Above ₹2,000: Standard CC MDR applies.',
+    ruleSummaryTe: '₹2,000 వరకు 0%. ₹2,000 దాటితే క్రెడిట్ కార్డ్ MDR వర్తిస్తుంది.',
+    reasonEn:
+      'Transactions up to ₹2,000 have Nil MDR (0%). Above ₹2,000, standard CC MDR applies to the merchant. Customer pays ₹0 extra.',
+    reasonTe:
+      '₹2,000 వరకు 0% ఫీజు. ₹2,000 దాటితే క్రెడిట్ కార్డ్ MDR వ్యాపారికి వర్తిస్తుంది. కస్టమర్‌కు ఎలాంటి ఛార్జీ ఉండదు.',
   },
 
   // -------------------------------------------------------------
@@ -329,7 +462,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: '0% fee for small merchants accepting wallet UPI payments.',
     ruleSummaryTe: 'చిన్న వ్యాపారులకు వాలెట్ UPI చెల్లింపులపై 0% ఛార్జ్.',
     reasonEn:
-      'Offline small merchants under P2PM are exempt from wallet interchange fees. Customer pays ₹0 extra.',
+      'Offline small merchants under P2PM are exempt from wallet interchange fees. Customer pays strictly ₹0 extra.',
     reasonTe:
       'చిన్న వ్యాపారులకు వాలెట్ UPI చెల్లింపులపై పూర్తి మినహాయింపు (0% ఫీజు) ఉంది. కస్టమర్‌కు ఎలాంటి అదనపు ఛార్జీ ఉండదు.',
   },
@@ -353,7 +486,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: 'Free up to ₹2,000. Above ₹2,000, up to 1.10% interchange applies.',
     ruleSummaryTe: '₹2,000 వరకు ఉచితం. ₹2,000 దాటితే 1.10% వరకు ఇంటర్‌ఛేంజ్ ఫీజు.',
     reasonEn:
-      'Transactions above ₹2,000 using prepaid wallets on merchant QR incur 1.10% interchange fee. Customer pays ₹0 extra.',
+      'Transactions above ₹2,000 using prepaid wallets on merchant QR incur 1.10% interchange fee. Customer pays strictly ₹0 extra.',
     reasonTe:
       'వాలెట్ ద్వారా ₹2,000 మించిన లావాదేవీలకు 1.10% రుసుము వర్తిస్తుంది. కస్టమర్ ఎటువంటి అదనపు రుసుము చెల్లించరు.',
   },
@@ -377,14 +510,14 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: 'Free up to ₹2,000. Above ₹2,000, 0.50% interchange for fuel & utilities.',
     ruleSummaryTe: '₹2,000 వరకు ఉచితం. ₹2,000 దాటితే ఇంధనం, నిత్యావసరాలపై 0.50% ఫీజు.',
     reasonEn:
-      'Fuel and utility transactions above ₹2,000 via prepaid wallet have 0.50% interchange. Customer pays ₹0 extra.',
+      'Fuel and utility transactions above ₹2,000 via prepaid wallet have 0.50% interchange. Customer pays strictly ₹0 extra.',
     reasonTe:
       'ఇంధనం మరియు యుటిలిటీస్ లావాదేవీలకు వాలెట్ ద్వారా ₹2,000 దాటినప్పుడు 0.50% రుసుము. కస్టమర్‌కు ₹0 ఛార్జ్.',
   },
   {
     id: 'ppi_wallet_capital_markets',
     titleEn: 'Wallet/PPI on UPI - Capital Markets (NPCI Circular)',
-    titleTe: 'వాలెట్/PPI UPI - క్యాపిటಲ್ మార్కెట్లు (NPCI సర్క్యులర్)',
+    titleTe: 'వాలెట్/PPI UPI - క్యాపిటల్ మార్కెట్లు (NPCI సర్క్యులర్)',
     effectiveFrom: '2023-04-01',
     effectiveUntil: null,
     transactionType: 'P2M',
@@ -401,7 +534,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: 'Free up to ₹2,000. Above ₹2,000, interchange applies.',
     ruleSummaryTe: '₹2,000 వరకు ఉచితం. ₹2,000 దాటితే రుసుము వర్తిస్తుంది.',
     reasonEn:
-      'Prepaid wallet transactions above ₹2,000 on capital market merchants incur standard interchange. Customer pays ₹0 extra.',
+      'Prepaid wallet transactions above ₹2,000 on capital market merchants incur standard interchange. Customer pays strictly ₹0 extra.',
     reasonTe:
       'వాలెట్ ద్వారా ₹2,000 మించిన లావాదేవీలకు వర్తించే ఫీజు. కస్టమర్‌కు ₹0 ఛార్జ్.',
   },
