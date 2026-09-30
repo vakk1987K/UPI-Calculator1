@@ -1,0 +1,6 @@
+{
+  "name": "UPI MDR Calculator India",
+  "description": "Simple and accurate UPI MDR & merchant settlement calculator for India with English and Telugu support. Official RBI/NPCI regulatory framework, caps, and effective date handling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
