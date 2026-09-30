@@ -36,7 +36,7 @@ export const UPI_REGULATORY_META = {
   independentStatementEn:
     'This is an independent calculator and is not affiliated with RBI, NPCI or the Government of India.',
   independentStatementTe:
-    'ఇది ఒక స్వతంత్ర కాలిక్యులేటర్ మరియు RBI, NPCI లేదా భారత ప్రభుత్వంతో ఎటువంటి అధికారిక సంబంధం లేదు.',
+    'ఇది ఒక స్వతంత్ర కాలిక్యులేటర్ మరియు RBI, NPCI లేదా భారత ప్రభుత్వంతో ఎటువంటి అధికారಿಕ సంబంధం లేదు.',
 };
 
 export const MERCHANT_CATEGORIES: MerchantCategoryConfig[] = [
@@ -74,7 +74,7 @@ export const MERCHANT_CATEGORIES: MerchantCategoryConfig[] = [
     descriptionEn: 'Mutual funds investments, securities, stockbrokers and authorized depository dealers.',
     descriptionTe: 'మ్యూచువల్ ఫండ్ పెట్టుబడులు, స్టాక్ బ్రోకర్లు, సెక్యూరిటీస్ కొనుగోళ్లు.',
     typicalExamplesEn: 'Mutual fund investments, stock trading apps, AMC subscriptions',
-    typicalExamplesTe: 'మ్యూచువల్ ఫండ్స్, డిమాట్ ట్రేడింగ్, షేర్ బ్రోకర్లు',
+    typicalExamplesTe: 'మ్యూచువಲ್ ఫండ్స్, డిమాట్ ట్రేడింగ్, షేర్ బ్రోకర్లు',
   },
 ];
 
@@ -172,7 +172,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     ruleSummaryEn: '0% MDR active under Ministry of Finance zero-MDR directive.',
     ruleSummaryTe: 'ఆర్థిక మంత్రిత్వ శాఖ జీరో-MDR ఉత్తర్వుల ప్రకారం 0% MDR.',
     reasonEn: 'Under the current rules until 14 October 2026, standard bank UPI has 0% MDR.',
-    reasonTe: '14 అక్టోబర్ 2026 వరకు ప్రామాణిక బ్యాంక్ UPI కి 0% MDR వర్తిస్తుంది.',
+    reasonTe: '14 అక్టోబర్ 2026 వరకు ప్రామాణಿಕ బ్యాంక్ UPI కి 0% MDR వర్తిస్తుంది.',
   },
   {
     id: 'current_bank_capital_markets',
@@ -384,7 +384,7 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
   {
     id: 'ppi_wallet_capital_markets',
     titleEn: 'Wallet/PPI on UPI - Capital Markets (NPCI Circular)',
-    titleTe: 'వాలెట్/PPI UPI - క్యాపిటల్ మార్కెట్లు (NPCI సర్క్యులర్)',
+    titleTe: 'వాలెట్/PPI UPI - క్యాపిటಲ್ మార్కెట్లు (NPCI సర్క్యులర్)',
     effectiveFrom: '2023-04-01',
     effectiveUntil: null,
     transactionType: 'P2M',
@@ -436,7 +436,6 @@ export function findApplicableRule(
 
   if (matchingRule) return matchingRule;
 
-  // Fallback safe default
   return UPI_RULES.find(
     (r) =>
       r.transactionType === 'P2M' &&
