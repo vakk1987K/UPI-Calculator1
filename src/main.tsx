@@ -539,20 +539,34 @@ export function App() {
   // Category Tag badge
   const categoryTag = useMemo(() => {
     if (txnType === 'P2P') return 'P2P Transfer';
-    if (paymentInstrument === 'rupay_credit_card') return 'RuPay Credit Card on UPI';
-    if (paymentInstrument === 'ppi_wallet') return 'Wallet/PPI on UPI';
-    switch (merchantCategory) {
-      case 'regular_merchant':
-        return 'Standard P2M — 0.40%';
-      case 'essential_services':
-        return 'Essential Sector — Flat ₹5';
-      case 'capital_markets':
-        return 'Capital Markets — 0.02%';
-      case 'small_merchant':
-        return 'Small Merchant (P2PM) — 0%';
-      default:
-        return 'Standard P2M';
+    const instrumentLabel =
+      paymentInstrument === 'rupay_credit_card'
+        ? 'RuPay CC'
+        : paymentInstrument === 'ppi_wallet'
+        ? 'Prepaid Wallet'
+        : 'Bank UPI';
+
+    if (merchantCategory === 'small_merchant') {
+      return `${instrumentLabel} (Small Merchant) — 0%`;
     }
+    if (merchantCategory === 'capital_markets') {
+      return `${instrumentLabel} (Capital Markets) — 0.02% (Cap ₹300)`;
+    }
+    if (merchantCategory === 'essential_services') {
+      return paymentInstrument === 'ppi_wallet'
+        ? 'Prepaid Wallet (Essential) — 0.50%'
+        : paymentInstrument === 'rupay_credit_card'
+        ? 'RuPay CC (Essential) — 1.50%'
+        : 'Essential Sector — Flat ₹5';
+    }
+    // regular_merchant
+    if (paymentInstrument === 'rupay_credit_card') {
+      return 'RuPay CC — ~2.00%';
+    }
+    if (paymentInstrument === 'ppi_wallet') {
+      return 'Prepaid Wallet — 1.10%';
+    }
+    return 'Standard P2M — 0.40%';
   }, [txnType, paymentInstrument, merchantCategory]);
 
   return (

@@ -134,95 +134,58 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
       }
     } else {
       // Exceeds threshold (> ₹2,000)
-      if (paymentInstrument === 'rupay_credit_card') {
-        // RuPay Credit Card on UPI (NPCI Circular)
-        if (matchedRule.isExempt || matchedRule.rateAboveThreshold === 0) {
-          estimatedMdr = 0;
-          applicableMdrRatePercent = 0;
-          rawMdrAmount = 0;
-          mdrCapApplied = false;
-          formulaText = `${formattedAmount} (RuPay CC Small Merchant Exemption) → 0% = ₹0.00`;
-          explanationEn = `Small offline merchants accepting RuPay Credit Card on UPI are exempt from MDR (Nil MDR / 0% fee) as per NPCI circular. Customer surcharge is ₹0.`;
-          explanationTe = `NPCI సర్క్యులర్ ప్రకారం చిన్న వ్యాపారులకు రూపే క్రెడిట్ కార్డ్ UPI చెల్లింపులపై పూర్తి మినహాయింపు (0% ఫీజు) ఉంది. కస్టమర్ ఛార్జ్ ₹0.`;
+      if (matchedRule.isExempt || (matchedRule.rateAboveThreshold === 0 && !matchedRule.isFlatFee)) {
+        estimatedMdr = 0;
+        applicableMdrRatePercent = 0;
+        rawMdrAmount = 0;
+        mdrCapApplied = false;
+
+        if (categoryKey === 'small_merchant') {
+          formulaText = `${formattedAmount} (Small Merchant Exemption) → 0% = ₹0.00`;
+          explanationEn = `Small merchants are 100% exempt from MDR (0% MDR). Merchant receives full ${formattedAmount}, and customer pays ₹0 extra.`;
+          explanationTe = `చిన్న వ్యాపారులకు 0% MDR (పూర్తి ఉచితం). కస్టమర్ ఛార్జ్ ₹0.`;
         } else {
-          applicableMdrRatePercent = roundToDecimals(matchedRule.rateAboveThreshold * 100, 2);
-          rawMdrAmount = roundToDecimals(safeAmount * matchedRule.rateAboveThreshold, 2);
-          estimatedMdr = rawMdrAmount;
-          mdrCapApplied = false;
-          formulaText = `${formattedAmount} × ${applicableMdrRatePercent}% (RuPay CC MDR) = ${formatCurrencyINR(estimatedMdr, true)}`;
-          explanationEn = `Transaction is above ₹2,000 using RuPay Credit Card on UPI. As per NPCI circular, standard credit card MDR of ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) is deducted from the merchant payout. Crucially, the customer pays ₹0 surcharge.`;
-          explanationTe = `రూపే క్రెడిట్ కార్డ్ ద్వారా ₹2,000 దాటిన లావాదేవీకి NPCI నిబంధనల ప్రకారం వ్యాపారి వైపు ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) రుసుము వర్తిస్తుంది. కస్టమర్ ఎటువంటి అదనపు రుసుము లేకుండా సరిగ్గా ${formattedAmount} మాత్రమే చెల్లిస్తారు.`;
+          formulaText = `${formattedAmount} (Active Zero-MDR until 14 Oct 2026) → 0% = ₹0.00`;
+          explanationEn = `Transaction is above ₹2,000. Under the active zero-MDR directive (effective until 14 October 2026), standard bank-to-bank UPI incurs 0% MDR. Both customer and merchant pay ₹0 fee.`;
+          explanationTe = `ప్రస్తుతం అమల్లో ఉన్న మార్గదర్శకాల ప్రకారం (14 అక్టోబర్ 2026 వరకు) ప్రామాణిక బ్యాంక్ UPI కి 0% MDR ఉంటుంది. కస్టమర్ మరియు వ్యాపారి ఇద్దరికీ ₹0 ఫీజు.`;
         }
-      } else if (paymentInstrument === 'ppi_wallet') {
-        // Prepaid Wallet (PPI) on UPI QR (NPCI Circular)
-        if (matchedRule.isExempt || matchedRule.rateAboveThreshold === 0) {
-          estimatedMdr = 0;
-          applicableMdrRatePercent = 0;
-          rawMdrAmount = 0;
-          mdrCapApplied = false;
-          formulaText = `${formattedAmount} (Wallet Small Merchant Exemption) → 0% = ₹0.00`;
-          explanationEn = `Small offline merchants accepting wallet UPI payments are fully exempt (0% fee) under NPCI circular. Customer charge is ₹0.`;
-          explanationTe = `NPCI సర్క్యులర్ ప్రకారం చిన్న వ్యాపారులకు వాలెట్ UPI చెల్లింపులపై పూర్తి మినహాయింపు (0% ఫీజు) ఉంది. కస్టమర్ ఛార్జ్ ₹0.`;
-        } else {
-          applicableMdrRatePercent = roundToDecimals(matchedRule.rateAboveThreshold * 100, 2);
-          rawMdrAmount = roundToDecimals(safeAmount * matchedRule.rateAboveThreshold, 2);
-          estimatedMdr = rawMdrAmount;
-          mdrCapApplied = false;
-          formulaText = `${formattedAmount} × ${applicableMdrRatePercent}% (Wallet Interchange) = ${formatCurrencyINR(estimatedMdr, true)}`;
-          explanationEn = `Transaction is above ₹2,000 using Prepaid Wallet/PPI on UPI QR. As per NPCI rules, a ${applicableMdrRatePercent}% interchange (${formatCurrencyINR(estimatedMdr, true)}) applies on the merchant side. Crucially, the customer pays ₹0 surcharge.`;
-          explanationTe = `వాలెట్/PPI ద్వారా ₹2,000 దాటిన లావాదేవీలకు NPCI నిబంధనల ప్రకారం వ్యాపారి వైపు ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) రుసుము వర్తిస్తుంది. కస్టమర్ ఎటువంటి అదనపు రుసుము లేకుండా సరిగ్గా ${formattedAmount} మాత్రమే చెల్లిస్తారు.`;
-        }
+      } else if (matchedRule.isFlatFee) {
+        // Path 3: Essential & Thin-margin Sectors (Flat ₹5 for > ₹2,000)
+        isFlatFee = true;
+        flatFeeAmount = matchedRule.flatFeeAmount || 5;
+        estimatedMdr = flatFeeAmount;
+        rawMdrAmount = flatFeeAmount;
+        applicableMdrRatePercent = roundToDecimals((flatFeeAmount / safeAmount) * 100, 4);
+        mdrCapApplied = false;
+
+        formulaText = `${formattedAmount} > ₹2,000 (Essential Sector) → Statutory Flat ₹${flatFeeAmount}.00`;
+        explanationEn = `Transaction is above ₹2,000 in an essential sector (fuel, railways, telecom, utilities, agriculture). A statutory flat ₹5 MDR applies on the merchant side, not a percentage. Customer pays ₹0 extra (Debited ${formattedAmount}).`;
+        explanationTe = `నిత్యావసరాలు, ఇంధనం లేదా రైల్వేల లావాదేవీ ₹2,000 దాటినందున, శాతం కాకుండా ఫ్లాట్ ₹5 MDR మాత్రమే వర్తిస్తుంది. కస్టమర్ ఛార్జ్ ₹0.`;
       } else {
-        // Standard Bank Account UPI
-        if (matchedRule.isExempt || (matchedRule.rateAboveThreshold === 0 && !matchedRule.isFlatFee)) {
-          // Either current rules (until 14 Oct 2026) or small merchant P2PM exempt
-          estimatedMdr = 0;
-          applicableMdrRatePercent = 0;
-          rawMdrAmount = 0;
-          mdrCapApplied = false;
+        // Percentage calculation with Cap logic (Applies to all instruments: Bank UPI, Wallet, RuPay CC)
+        const decimalRate = matchedRule.rateAboveThreshold;
+        applicableMdrRatePercent = roundToDecimals(decimalRate * 100, 4);
+        rawMdrAmount = roundToDecimals(safeAmount * decimalRate, 2);
 
-          if (categoryKey === 'small_merchant') {
-            formulaText = `${formattedAmount} (P2PM QR ≤ ₹1 Lakh/mo) → 0% = ₹0.00`;
-            explanationEn = `Small merchants receiving up to ₹1 Lakh/month under the P2PM QR framework are 100% exempt from MDR (0% MDR). Merchant receives full ${formattedAmount}, and customer pays ₹0 extra.`;
-            explanationTe = `P2PM QR విధానం కింద నెలకు ₹1 లక్ష లోపు లావాదేవీలు పొందే చిన్న వ్యాపారులకు 0% MDR (పూర్తి ఉచితం). కస్టమర్ ఛార్జ్ ₹0.`;
-          } else {
-            formulaText = `${formattedAmount} (Active Zero-MDR until 14 Oct 2026) → 0% = ₹0.00`;
-            explanationEn = `Transaction is above ₹2,000. Under the currently active zero-MDR directive (effective until 14 October 2026), standard bank-to-bank UPI incurs 0% MDR. Both customer and merchant pay ₹0 fee.`;
-            explanationTe = `ప్రస్తుతం అమల్లో ఉన్న మార్గదర్శకాల ప్రకారం (14 అక్టోబర్ 2026 వరకు) ప్రామాణిక బ్యాంక్ UPI కి 0% MDR ఉంటుంది. కస్టమర్ మరియు వ్యాపారి ఇద్దరికీ ₹0 ఫీజు.`;
-          }
-        } else if (matchedRule.isFlatFee) {
-          // Path 3: Essential & Thin-margin Sectors (Flat ₹5 for > ₹2,000)
-          isFlatFee = true;
-          flatFeeAmount = matchedRule.flatFeeAmount || 5;
-          estimatedMdr = flatFeeAmount;
-          rawMdrAmount = flatFeeAmount;
-          applicableMdrRatePercent = roundToDecimals((flatFeeAmount / safeAmount) * 100, 4);
-          mdrCapApplied = false;
+        const categoryLabel =
+          categoryKey === 'capital_markets'
+            ? 'Capital Markets'
+            : categoryKey === 'regular_merchant'
+            ? (paymentInstrument === 'ppi_wallet' ? 'Wallet Interchange' : paymentInstrument === 'rupay_credit_card' ? 'RuPay CC MDR' : 'P2M MDR')
+            : categoryMeta?.labelEn || 'Merchant MDR';
 
-          formulaText = `${formattedAmount} > ₹2,000 (Essential Sector) → Statutory Flat ₹${flatFeeAmount}.00`;
-          explanationEn = `Transaction is above ₹2,000 in an essential sector (fuel, railways, telecom, utilities, agriculture). A statutory flat ₹5 MDR applies on the merchant side, not a percentage. Customer pays ₹0 extra (Debited ${formattedAmount}).`;
-          explanationTe = `నిత్యావసరాలు, ఇంధనం లేదా రైల్వేల లావాదేవీ ₹2,000 దాటినందున, శాతం కాకుండా ఫ్లాట్ ₹5 MDR మాత్రమే వర్తిస్తుంది. కస్టమర్ ఛార్జ్ ₹0.`;
+        if (mdrCapAmount !== null && rawMdrAmount > mdrCapAmount) {
+          estimatedMdr = mdrCapAmount;
+          mdrCapApplied = true;
+          formulaText = `${formattedAmount} × ${applicableMdrRatePercent}% (${categoryLabel}) = ${formatCurrencyINR(rawMdrAmount, true)} → Cap Applied: ${formatCurrencyINR(mdrCapAmount, true)}`;
+          explanationEn = `Transaction is above ₹${matchedRule.threshold.toLocaleString('en-IN')}. Calculated fee is ${formatCurrencyINR(rawMdrAmount, true)} (${applicableMdrRatePercent}%), but the regulatory maximum cap of ${formatCurrencyINR(mdrCapAmount, true)} has been applied. Merchant pays ${formatCurrencyINR(estimatedMdr, true)}. Customer charge is ₹0.`;
+          explanationTe = `లావాదేవీ ₹${matchedRule.threshold.toLocaleString('en-IN')} మించింది. లెక్కింపబడిన ఛార్జ్ ${formatCurrencyINR(rawMdrAmount, true)} అయినప్పటికీ, నిబంధనల ప్రకారం గరిష్ట పరిమితి ${formatCurrencyINR(mdrCapAmount, true)} వర్తించబడింది. వ్యాపారి చెల్లించే MDR ${formatCurrencyINR(estimatedMdr, true)}. కస్టమర్ ఛార్జ్ ₹0.`;
         } else {
-          // Percentage with cap:
-          // Path 2: Normal P2M Merchant (0.40%, cap ₹300)
-          // Path 4: Capital Markets (0.02%, cap ₹300)
-          const decimalRate = matchedRule.rateAboveThreshold;
-          applicableMdrRatePercent = roundToDecimals(decimalRate * 100, 4);
-          rawMdrAmount = roundToDecimals(safeAmount * decimalRate, 2);
-
-          if (mdrCapAmount !== null && rawMdrAmount > mdrCapAmount) {
-            estimatedMdr = mdrCapAmount;
-            mdrCapApplied = true;
-            formulaText = `${formattedAmount} × ${applicableMdrRatePercent}% = ${formatCurrencyINR(rawMdrAmount, true)} → Cap Applied: ${formatCurrencyINR(mdrCapAmount, true)}`;
-            explanationEn = `Transaction is above ₹${matchedRule.threshold.toLocaleString('en-IN')}. Calculated MDR is ${formatCurrencyINR(rawMdrAmount, true)} (${applicableMdrRatePercent}%), but the regulatory maximum cap of ${formatCurrencyINR(mdrCapAmount, true)} has been applied. Merchant pays ${formatCurrencyINR(estimatedMdr, true)}. Customer charge is ₹0.`;
-            explanationTe = `లావాదేవీ ₹${matchedRule.threshold.toLocaleString('en-IN')} మించింది. లెక్కింపబడిన MDR ${formatCurrencyINR(rawMdrAmount, true)} అయినప్పటికీ, నిబంధనల ప్రకారం గరిష్ట పరిమితి ${formatCurrencyINR(mdrCapAmount, true)} వర్తించబడింది. వ్యాపారి చెల్లించే MDR ${formatCurrencyINR(estimatedMdr, true)}. కస్టమర్ ఛార్జ్ ₹0.`;
-          } else {
-            estimatedMdr = rawMdrAmount;
-            mdrCapApplied = false;
-            formulaText = `${formattedAmount} × ${applicableMdrRatePercent}% = ${formatCurrencyINR(estimatedMdr, true)}`;
-            explanationEn = `Transaction is above ₹${matchedRule.threshold.toLocaleString('en-IN')}. MDR of ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) applies to the merchant. Customer charge is ₹0.`;
-            explanationTe = `లావాదేవీ ₹${matchedRule.threshold.toLocaleString('en-IN')} మించింది. వ్యాపారికి ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) MDR వర్తిస్తుంది. కస్టమర్ ఛార్జ్ ₹0.`;
-          }
+          estimatedMdr = rawMdrAmount;
+          mdrCapApplied = false;
+          formulaText = `${formattedAmount} × ${applicableMdrRatePercent}% (${categoryLabel}) = ${formatCurrencyINR(estimatedMdr, true)}`;
+          explanationEn = `Transaction is above ₹${matchedRule.threshold.toLocaleString('en-IN')}. Fee of ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) applies to the merchant for ${categoryLabel}. Customer charge is ₹0.`;
+          explanationTe = `లావాదేవీ ₹${matchedRule.threshold.toLocaleString('en-IN')} మించింది. వ్యాపారికి ${applicableMdrRatePercent}% (${formatCurrencyINR(estimatedMdr, true)}) వర్తిస్తుంది. కస్టమర్ ఛార్జ్ ₹0.`;
         }
       }
     }

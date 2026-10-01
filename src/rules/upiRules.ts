@@ -416,8 +416,8 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
   },
   {
     id: 'rupay_cc_capital_markets',
-    titleEn: 'RuPay CC on UPI - Capital Markets',
-    titleTe: 'రూపే క్రెడిట్ కార్డ్ UPI - క్యాపిటల్ మార్కెట్లు',
+    titleEn: 'RuPay CC on UPI - Capital Markets (Mutual Funds & Stocks)',
+    titleTe: 'రూపే క్రెడిట్ కార్డ్ UPI - క్యాపిటల్ మార్కెట్లు (మ్యూచువల్ ఫండ్స్ & షేర్లు)',
     effectiveFrom: '2022-10-01',
     effectiveUntil: null,
     transactionType: 'P2M',
@@ -425,18 +425,18 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     merchantCategory: 'capital_markets',
     threshold: 2000,
     rateBelowOrEqualThreshold: 0,
-    rateAboveThreshold: 0.02,
-    maximumMdrCap: null,
+    rateAboveThreshold: 0.0002, // 0.02%
+    maximumMdrCap: 300, // Capped at ₹300
     customerCharge: 0,
     isExempt: false,
-    source: 'NPCI Circular on RuPay Credit Card on UPI',
+    source: 'NPCI Circular & Capital Markets Guidelines',
     sourceDate: 'October 2022 onwards',
-    ruleSummaryEn: 'Up to ₹2,000: Nil MDR (0%). Above ₹2,000: Standard CC MDR applies.',
-    ruleSummaryTe: '₹2,000 వరకు 0%. ₹2,000 దాటితే క్రెడిట్ కార్డ్ MDR వర్తిస్తుంది.',
+    ruleSummaryEn: 'Up to ₹2,000: Nil MDR (0%). Above ₹2,000: 0.02% capped at ₹300.',
+    ruleSummaryTe: '₹2,000 వరకు 0%. ₹2,000 దాటితే 0.02% (గరిష్ట పరిమితి ₹300).',
     reasonEn:
-      'Transactions up to ₹2,000 have Nil MDR (0%). Above ₹2,000, standard CC MDR applies to the merchant. Customer pays ₹0 extra.',
+      'Capital Markets (Mutual Funds, Stocks, Securities) have a concessional 0.02% MDR, capped at ₹300. Customer pays ₹0 extra.',
     reasonTe:
-      '₹2,000 వరకు 0% ఫీజు. ₹2,000 దాటితే క్రెడిట్ కార్డ్ MDR వ్యాపారికి వర్తిస్తుంది. కస్టమర్‌కు ఎలాంటి ఛార్జీ ఉండదు.',
+      'క్యాపిటల్ మార్కెట్లకు (మ్యూచువల్ ఫండ్స్, షేర్లు) 0.02% MDR వర్తిస్తుంది (గరిష్ట పరిమితి ₹300). కస్టమర్‌కు ఎలాంటి ఛార్జీ ఉండదు.',
   },
 
   // -------------------------------------------------------------
@@ -516,8 +516,8 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
   },
   {
     id: 'ppi_wallet_capital_markets',
-    titleEn: 'Wallet/PPI on UPI - Capital Markets (NPCI Circular)',
-    titleTe: 'వాలెట్/PPI UPI - క్యాపిటల్ మార్కెట్లు (NPCI సర్క్యులర్)',
+    titleEn: 'Wallet/PPI on UPI - Capital Markets (Mutual Funds & Stocks)',
+    titleTe: 'వాలెట్/PPI UPI - క్యాపిటల్ మార్కెట్లు (మ్యూచువల్ ఫండ్స్ & షేర్లు)',
     effectiveFrom: '2023-04-01',
     effectiveUntil: null,
     transactionType: 'P2M',
@@ -525,18 +525,18 @@ export const UPI_RULES: UpiRegulatoryRule[] = [
     merchantCategory: 'capital_markets',
     threshold: 2000,
     rateBelowOrEqualThreshold: 0,
-    rateAboveThreshold: 0.011, // 1.10% standard merchant interchange
-    maximumMdrCap: null,
+    rateAboveThreshold: 0.0002, // 0.02%
+    maximumMdrCap: 300, // Capped at ₹300
     customerCharge: 0,
     isExempt: false,
-    source: 'NPCI Circular on PPI Interchange on UPI',
-    sourceDate: 'Active since April 2023',
-    ruleSummaryEn: 'Free up to ₹2,000. Above ₹2,000, interchange applies.',
-    ruleSummaryTe: '₹2,000 వరకు ఉచితం. ₹2,000 దాటితే రుసుము వర్తిస్తుంది.',
+    source: 'NPCI Circular on PPI Interchange & Capital Markets Framework',
+    sourceDate: 'Active',
+    ruleSummaryEn: 'Up to ₹2,000: ₹0. Above ₹2,000: 0.02% capped at ₹300.',
+    ruleSummaryTe: '₹2,000 వరకు ₹0. ₹2,000 దాటితే 0.02% (గరిష్ట పరిమితి ₹300).',
     reasonEn:
-      'Prepaid wallet transactions above ₹2,000 on capital market merchants incur standard interchange. Customer pays strictly ₹0 extra.',
+      'Capital Markets (Mutual Funds, Stocks, Securities) have a concessional 0.02% rate, capped at ₹300. Customer fee is strictly ₹0.',
     reasonTe:
-      'వాలెట్ ద్వారా ₹2,000 మించిన లావాదేవీలకు వర్తించే ఫీజు. కస్టమర్‌కు ₹0 ఛార్జ్.',
+      'క్యాపిటల్ మార్కెట్లకు (మ్యూచువల్ ఫండ్స్, షేర్లు) 0.02% రేటు వర్తిస్తుంది (గరిష్ట పరిమితి ₹300). కస్టమర్‌కు ₹0 ఛార్జ్.',
   },
 ];
 

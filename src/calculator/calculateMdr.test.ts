@@ -124,6 +124,47 @@ describe('UPI MDR Official Calculation Tests (2026 Framework)', () => {
       expect(res20L.estimatedMdr).toBe(300);
       expect(res20L.mdrCapApplied).toBe(true);
     });
+
+    it('returns 0.02% capped at ₹300 when paying via Prepaid Wallet on Capital Markets', () => {
+      // 10000 * 0.0002 = 2
+      const resWallet10k = calculateUpiMdr({
+        amount: 10000,
+        transactionType: 'P2M',
+        paymentInstrument: 'ppi_wallet',
+        merchantCategory: 'capital_markets',
+        evaluationDate: futureDate,
+      });
+      expect(resWallet10k.estimatedMdr).toBe(2);
+      expect(resWallet10k.applicableMdrRatePercent).toBe(0.02);
+      expect(resWallet10k.formulaText).toContain('0.02%');
+      expect(resWallet10k.formulaText).toContain('Capital Markets');
+      expect(resWallet10k.customerCharge).toBe(0);
+      expect(resWallet10k.estimatedMerchantSettlement).toBe(9998);
+
+      // 2000000 * 0.0002 = 400 -> Capped at 300
+      const resWallet20L = calculateUpiMdr({
+        amount: 2000000,
+        transactionType: 'P2M',
+        paymentInstrument: 'ppi_wallet',
+        merchantCategory: 'capital_markets',
+        evaluationDate: futureDate,
+      });
+      expect(resWallet20L.estimatedMdr).toBe(300);
+      expect(resWallet20L.mdrCapApplied).toBe(true);
+      expect(resWallet20L.formulaText).toContain('Cap Applied: ₹300');
+    });
+
+    it('returns 0.02% capped at ₹300 when paying via RuPay Credit Card on Capital Markets', () => {
+      const resCC10k = calculateUpiMdr({
+        amount: 10000,
+        transactionType: 'P2M',
+        paymentInstrument: 'rupay_credit_card',
+        merchantCategory: 'capital_markets',
+        evaluationDate: futureDate,
+      });
+      expect(resCC10k.estimatedMdr).toBe(2);
+      expect(resCC10k.applicableMdrRatePercent).toBe(0.02);
+    });
   });
 
   // -------------------------------------------------------------
