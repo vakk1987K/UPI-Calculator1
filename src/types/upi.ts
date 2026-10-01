@@ -1,74 +1,52 @@
 /**
- * Official UPI MDR Type Definitions
- * Strictly aligned with RBI, NPCI Circulars & Ministry of Finance (DFS).
- * Sourced: September 30, 2026.
+ * Official UPI Framework Type Definitions
+ * Strictly aligned with:
+ * 1. RBI Notification on Zero MDR (Section 10A Payment and Settlement Systems Act)
+ * 2. NPCI UPI Circulars & FAQs on PPI-on-UPI Interchange
+ * 3. NPCI RuPay Credit Card on UPI Operating Circulars
+ * Sourced: Current 2026 Regulatory Status.
  */
 
 export type TransactionType = 'P2P' | 'P2M';
 
-export type SupportedLanguage = 'en' | 'te';
+export type SupportedLanguage = 'en' | 'te' | 'hi' | 'mr' | 'gu' | 'ta' | 'bn' | 'or' | 'kn';
 
 export type PaymentInstrument =
-  | 'bank_account' // Standard Bank-to-Bank Account UPI
-  | 'rupay_credit_card' // RuPay Credit Card linked on UPI (NPCI Circular)
-  | 'ppi_wallet'; // Prepaid Payment Instruments (Paytm Wallet, PhonePe Wallet, PPI on UPI)
+  | 'bank_account' // Standard Bank-to-Bank Account UPI (Zero MDR under Sec 10A PSS Act)
+  | 'ppi_wallet' // Prepaid Payment Instruments / Wallets on UPI (NPCI Interchange Circular)
+  | 'rupay_credit_card'; // RuPay Credit Card linked on UPI (NPCI Operating Circular)
 
 export type MerchantCategoryKey =
-  | 'regular_merchant' // Normal P2M Merchant / Retail Shop (0.40%, Cap ₹300)
-  | 'small_merchant' // Small Merchant / P2PM QR (≤ ₹1 Lakh/month: 0% Free)
-  | 'essential_services' // Essential & Thin-Margin (Railways, Telecom, Insurance, Fuel, Agri: Flat ₹5)
-  | 'capital_markets'; // Capital Markets (Mutual Funds, Securities, Stockbrokers: 0.02%, Cap ₹300)
+  | 'general_merchant' // Standard merchant / retail store
+  | 'small_offline_merchant' // Qualifying small offline merchant (P2PM QR / turnover ≤ ₹20L)
+  | 'fuel_and_utilities' // Fuel stations, utility bills, railway bookings
+  | 'capital_markets' // Mutual funds, stockbrokers, securities (SEBI / Bank UPI mandatory)
+  | 'regular_merchant'
+  | 'small_merchant'
+  | 'essential_services';
 
-export interface MerchantCategoryConfig {
-  key: MerchantCategoryKey;
-  labelEn: string;
-  labelTe: string;
-  descriptionEn: string;
-  descriptionTe: string;
-  typicalExamplesEn: string;
-  typicalExamplesTe: string;
-}
-
-export interface PaymentInstrumentConfig {
-  key: PaymentInstrument;
-  labelEn: string;
-  labelTe: string;
-  shortDescEn: string;
-  shortDescTe: string;
-  regulatoryNoteEn: string;
-}
-
-export interface UpiRegulatoryRule {
-  id: string;
+export interface RegulatoryFrameworkMeta {
+  instrument: PaymentInstrument;
   titleEn: string;
   titleTe: string;
-  effectiveFrom: string; // ISO date 'YYYY-MM-DD'
-  effectiveUntil: string | null; // ISO date or null if ongoing
-  transactionType: TransactionType;
-  paymentInstrument?: PaymentInstrument;
-  merchantCategory?: MerchantCategoryKey;
-  threshold: number; // e.g. 2000 INR
-  rateBelowOrEqualThreshold: number; // Decimal (0.0 = 0%)
-  rateAboveThreshold: number; // Decimal (e.g. 0.004 = 0.40%, 0.0002 = 0.02%, 0.02 = 2.0%)
-  isFlatFee?: boolean; // True if statutory flat fee (e.g. ₹5 for essential sectors)
-  flatFeeAmount?: number; // Flat fee in INR (e.g. 5)
-  maximumMdrCap: number | null; // Cap in INR (e.g. 300 or null)
-  customerCharge: number; // ALWAYS 0 for UPI in India
-  isExempt: boolean;
-  source: string;
-  sourceDate: string;
-  ruleSummaryEn: string;
-  ruleSummaryTe: string;
-  reasonEn: string;
-  reasonTe: string;
+  regulatoryStatusEn: string;
+  regulatoryStatusTe: string;
+  customerChargeEn: string;
+  customerChargeTe: string;
+  merchantMdrEn: string;
+  merchantMdrTe: string;
+  acquirerCommercialNoteEn: string;
+  acquirerCommercialNoteTe: string;
+  officialSource: string;
+  officialSourceUrl: string;
 }
 
 export interface CalculationInput {
   amount: number | string;
   transactionType: TransactionType;
-  paymentInstrument?: PaymentInstrument;
+  paymentInstrument: PaymentInstrument;
   merchantCategory?: MerchantCategoryKey;
-  evaluationDate?: string; // e.g. '2026-10-15' or '2026-09-30'
+  evaluationDate?: string;
 }
 
 export interface CalculationResult {
@@ -80,27 +58,45 @@ export interface CalculationResult {
   merchantCategory?: MerchantCategoryKey;
   merchantCategoryLabelEn?: string;
   merchantCategoryLabelTe?: string;
-  customerCharge: number; // ALWAYS 0
+  
+  // Customer Side (Always ₹0 extra across all UPI instruments)
+  customerCharge: number; // 0
   customerTotalPays: number;
-  applicableMdrRatePercent: number;
-  rawMdrAmount: number;
-  estimatedMdr: number;
+  
+  // Ecosystem / Regulatory / Acquirer Side
+  isMdrLegallyZero: boolean;
+  statutoryMdrPercent: number; // 0% for bank account UPI
+  statutoryMdrAmount: number;
+  
+  // Interchange / Commercial Acquirer Side
+  hasEcosystemInterchange: boolean;
+  interchangeRatePercent: number;
+  estimatedInterchangeAmount: number;
+  isSmallMerchantExempt: boolean;
+  
+  // Optional backward compatibility fields
+  isMdrApplicable?: boolean;
+  applicableMdrRatePercent?: number;
+  estimatedMdr?: number;
+  rawMdrAmount?: number;
+  mdrCapApplied?: boolean;
+  mdrCapAmount?: number | null;
+  explanationEn?: string;
+  explanationTe?: string;
+  sourceNotice?: string;
+  ruleEffectiveFrom?: string;
+  ruleEffectiveUntil?: string | null;
+  
   formulaText: string;
-  isFlatFee: boolean;
-  flatFeeAmount: number;
-  mdrCapApplied: boolean;
-  mdrCapAmount: number | null;
-  estimatedMerchantSettlement: number;
-  isMdrApplicable: boolean;
   whoBearsFeeEn: string;
   whoBearsFeeTe: string;
-  appliedRuleId: string;
-  ruleEffectiveFrom: string;
-  ruleEffectiveUntil: string | null;
-  isFutureFrameworkActive: boolean;
-  explanationEn: string;
-  explanationTe: string;
-  sourceNotice: string;
+  
+  estimatedMerchantSettlement: number;
+  commercialSettlementDisclaimerEn: string;
+  commercialSettlementDisclaimerTe: string;
+  
+  officialCircularNoticeEn: string;
+  officialCircularNoticeTe: string;
   validationWarning?: string;
 }
 
