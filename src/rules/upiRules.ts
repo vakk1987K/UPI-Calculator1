@@ -10,7 +10,6 @@
  */
 
 import {
-  MerchantCategoryKey,
   PaymentInstrument,
   RegulatoryFrameworkMeta,
 } from '../types/upi';
@@ -74,7 +73,7 @@ export const REGULATORY_FRAMEWORKS: Record<PaymentInstrument, RegulatoryFramewor
   ppi_wallet: {
     instrument: 'ppi_wallet',
     titleEn: 'Prepaid Wallet / PPI on UPI QR (Paytm/PhonePe Wallet)',
-    titleTe: 'ప్రిପେಡ್ వాలెట్ / PPI UPI',
+    titleTe: 'ప్రిపేడ్ వాలెట్ / PPI UPI',
     regulatoryStatusEn: 'NPCI PPI Interchange Framework (March 2023 Circular)',
     regulatoryStatusTe: 'NPCI PPI ఇంటర్‌ఛేంజ్ నిబంధనలు',
     customerChargeEn: '₹0 (Customers pay NO extra convenience charge for wallet UPI)',
