@@ -7,7 +7,6 @@ import {
   Store,
   Languages,
   Download,
-  Info,
   Check,
   Calendar,
   User,
@@ -26,7 +25,7 @@ import { MerchantCategoryKey, PaymentInstrument, TransactionType } from './types
 import { UPI_REGULATORY_META } from './rules/upiRules';
 
 // =========================================================================
-// 1. LANGUAGES (9 Indian Languages)
+// 1. LANGUAGES (9 Indian Languages with Odia / Oriya clearly labeled)
 // =========================================================================
 export type SupportedLanguage = 'en' | 'te' | 'hi' | 'mr' | 'gu' | 'ta' | 'bn' | 'or' | 'kn';
 
@@ -38,7 +37,7 @@ export const LANGUAGES = [
   { code: 'gu', name: 'Gujarati', nativeName: 'ગુજરાતી' },
   { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
-  { code: 'or', name: 'Odia', nativeName: 'ଓଡ଼ିଆ' },
+  { code: 'or', name: 'Odia / Oriya', nativeName: 'ଓଡ଼ିଆ (Odia)' },
   { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
 ];
 
@@ -86,11 +85,86 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'Payment system MDR deduction:',
     netShopCredit: 'Net amount credited to merchant account:',
     whoBearsNotice: 'Who bears this charge?',
+    step3Title: 'Official Calculation Paths & Payment Instrument Rules',
+    card1Title: '1. P2P (Person to Person)',
+    card1Desc: '₹0 MDR at any amount. Sending ₹1,000, ₹10,000 or ₹1 Lakh to friends or family is 100% free with zero fees.',
+    card2Title: '2. Normal P2M Merchant (Bank UPI)',
+    card2Desc: '≤ ₹2,000 → ₹0. Above ₹2,000 → 0.40% on total amount, capped at ₹300 (at ₹75,000+).',
+    card3Title: '3. RuPay Credit Card on UPI',
+    card3Desc: '≤ ₹2,000 & Small Vendors → Nil MDR (0%). Above ₹2,000 at regular merchants → ~2.0% standard credit card MDR.',
+    card4Title: '4. Essential / Fuel / Railways',
+    card4Desc: 'Railways, telecom, fuel, insurance, and utilities pay a Flat ₹5 MDR above ₹2,000, NOT a percentage (e.g. ₹10,000 fuel = ₹5 fee).',
+    card5Title: '5. Capital Markets',
+    card5Desc: 'Mutual funds, stocks, and securities pay only 0.02% (Capped at ₹300). E.g. ₹10,000 payment = ₹2 MDR.',
+    card6Title: '6. Small Merchants (P2PM QR)',
+    card6Desc: 'Small shops & street vendors receiving ≤ ₹1 Lakh/month via UPI QR continue to get 0% Zero MDR on all transactions!',
     lastVerified: 'Rules last verified: 30 September 2026',
     officialSources: 'Official Government & Regulatory Sources:',
     source1: 'NPCI UPI Circulars (Official Listing)',
     source2: 'Department of Financial Services — UPI MDR FAQ',
     source3: 'Government/PIB explanation of the new UPI MDR framework',
+  },
+  or: {
+    appTitle: 'UPI MDR କ୍ୟାଲକୁଲେଟର (ଭାରତ)',
+    subtitle: 'ସ୍ୱତନ୍ତ୍ର ଶିକ୍ଷାମୂଳକ ସାଧନ • RBI, NPCI ଏବଂ ଅର୍ଥ ମନ୍ତ୍ରଣାଳୟ ନିର୍ଦ୍ଦେଶାବଳୀ',
+    bannerTitle: 'ନୂତନ UPI MDR ନିୟମ — ୧୫ ଅକ୍ଟୋବର ୨୦୨୬ ରୁ ଲାଗୁ',
+    bannerSubtext: 'ନୂତନ ନିୟମ ୧୫ ଅକ୍ଟୋବର ୨୦୨୬ ରୁ ଲାଗୁ ହେବ। ୧୪ ଅକ୍ଟୋବର ୨୦୨୬ ପର୍ଯ୍ୟନ୍ତ ସାଧାରଣ ବ୍ୟାଙ୍କ UPI ରେ ୦% MDR ଜାରି ରହିବ।',
+    viewNewRules: 'ନୂତନ ନିୟମ — ୧୫ ଅକ୍ଟୋବର ୨୦୨୬ ରୁ',
+    viewCurrentRules: 'ବର୍ତ୍ତମାନର ନିୟମ — ୧୪ ଅକ୍ଟୋବର ୨୦୨୬ ପର୍ଯ୍ୟନ୍ତ',
+    installApp: 'ଆପ୍ ଇନଷ୍ଟଲ କରନ୍ତୁ',
+    selectLanguage: 'ଭାଷା',
+    disclaimerBannerTitle: 'ସୂଚନା ଏବଂ ଶିକ୍ଷାମୂଳକ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ',
+    disclaimerBannerText:
+      'ପ୍ରକୃତ ଶୁଳ୍କ ବ୍ୟବସାୟୀ ବର୍ଗ (MCC), ବ୍ୟାଙ୍କ ଚୁକ୍ତିନାମା ଏବଂ NPCI/RBI ପରିପତ୍ର ଉପରେ ନିର୍ଭର କରେ। ଏହା ସରକାର କିମ୍ବା RBI/NPCI ର ସରକାରୀ ଟୁଲ୍ ନୁହେଁ।',
+    txnStepTitle: '୧. ପେମେଣ୍ଟ ବିବରଣୀ ପ୍ରବେଶ କରନ୍ତୁ',
+    amountLabel: 'କାରବାର ରାଶି (₹ ରେ)',
+    amountPlaceholder: 'ରାଶି ଲେଖନ୍ତୁ (ଯଥା: 5000)',
+    txnTypeLabel: 'କାରବାର ପ୍ରକାର (Transaction Type)',
+    p2pPersonToPerson: 'P2P (ବ୍ୟକ୍ତିଗତ ସ୍ଥାନାନ୍ତର - ୧୦୦% ମାଗଣା)',
+    p2mMerchant: 'P2M (ଦୋକାନୀ / ବ୍ୟବସାୟୀଙ୍କୁ ଦେୟ)',
+    paymentModeLabel: 'ପେମେଣ୍ଟ ମାଧ୍ୟମ (Payment Instrument)',
+    modeBank: 'ବ୍ୟାଙ୍କ ଖାତା UPI (ସାଧାରଣ)',
+    modeRupayCC: 'ରୁପେ କ୍ରେଡିଟ୍ କାର୍ଡ UPI (RuPay CC)',
+    modeWallet: 'ପ୍ରିପେଡ୍ ୱାଲେଟ୍ / PPI (Paytm/PhonePe)',
+    merchantCatLabel: 'ବ୍ୟବସାୟୀ ବର୍ଗ (Merchant Category)',
+    catNormal: 'ସାଧାରଣ ବ୍ୟବସାୟୀ / ଦୋକାନ (୦.୪୦%, ସର୍ବାଧିକ ₹୩୦୦)',
+    catSmall: 'କ୍ଷୁଦ୍ର ବ୍ୟବସାୟୀ / P2PM QR (ମାସିକ ≤ ₹୧ ଲକ୍ଷ: ୦% ମାଗଣା)',
+    catEssential: 'ଅତ୍ୟାବଶ୍ୟକ ସେବା ଓ ଇନ୍ଧନ (ଫ୍ଲାଟ୍ ₹୫)',
+    catCapital: 'ପୁଞ୍ଜି ବଜାର, ମ୍ୟୁଚୁଆଲ୍ ଫଣ୍ଡ (୦.୦୨%, ସର୍ବାଧିକ ₹୩୦୦)',
+    formulaTitle: 'ଗଣନା ସୂତ୍ର (Calculation Formula)',
+    calculationsTitle: 'କାରବାର ହିସାବ ଏବଂ ଶୁଳ୍କ କିଏ ବହନ କରିବ?',
+    freeBadge: '୧୦୦% ମାଗଣା (₹୦ ଶୁଳ୍କ)',
+    feeBadge: 'ବ୍ୟବସାୟୀ MDR କଟାଯିବ',
+    boxCustomerPaid: 'ଗ୍ରାହକ ଦେଉଥିବା ରାଶି',
+    boxCustomerExtra: 'ଗ୍ରାହକ MDR ଶୁଳ୍କ',
+    boxZeroCustomer: '₹୦ (ସର୍ବଦା ମାଗଣା)',
+    boxCustomerDesc: 'ଗ୍ରାହକଙ୍କ ଠାରୁ କୌଣସି ଅତିରିକ୍ତ ଶୁଳ୍କ ନିଆଯିବ ନାହିଁ (Sec 10A PSS Act)',
+    boxBankMdr: 'ବ୍ୟବସାୟୀ MDR (ବ୍ୟାଙ୍କ କଟନ)',
+    boxMerchantGets: 'ବ୍ୟବସାୟୀଙ୍କ ବ୍ୟାଙ୍କରେ ଜମା',
+    receiptTitle: 'କାରବାର ରସିଦ ବିବରଣୀ',
+    customerScanned: 'ଗ୍ରାହକଙ୍କ ଖାତାରୁ କଟାଯାଇଥିବା ରାଶି:',
+    noExtraFee: 'ଗ୍ରାହକଙ୍କ ପାଇଁ କୌଣସି ଅତିରିକ୍ତ ଶୁଳ୍କ ନାହିଁ (୧୦୦% ମାଗଣା)',
+    bankDeduction: 'ବ୍ୟାଙ୍କ MDR କଟନ:',
+    netShopCredit: 'ବ୍ୟବସାୟୀଙ୍କ ଖାତାରେ ଜମା ହେବାକୁ ଥିବା ନିଟ୍ ରାଶି:',
+    whoBearsNotice: 'ଏହି ଶୁଳ୍କ କିଏ ବହନ କରେ?',
+    step3Title: 'ଅଫିସିଆଲ୍ ଗଣନା ମାର୍ଗ ଏବଂ ନିୟମାବଳୀ',
+    card1Title: '୧. P2P (ବ୍ୟକ୍ତିଗତ ସ୍ଥାନାନ୍ତର)',
+    card1Desc: 'ଯେକୌଣସି ରାଶି ପାଇଁ ₹୦ MDR। ସାଙ୍ଗ ବା ପରିବାରକୁ ଟଙ୍କା ପଠାଇବା ସମ୍ପୂର୍ଣ୍ଣ ମାଗଣା।',
+    card2Title: '୨. ସାଧାରଣ ବ୍ୟବସାୟୀ (ବ୍ୟାଙ୍କ UPI)',
+    card2Desc: '₹୨,୦୦୦ ପର୍ଯ୍ୟନ୍ତ ₹୦। ₹୨,୦୦୦ ଉପରେ ୦.୪୦% (ସର୍ବାଧିକ ₹୩୦୦ କ୍ୟାପ୍)।',
+    card3Title: '୩. ରୁପେ କ୍ରେଡିଟ୍ କାର୍ଡ UPI',
+    card3Desc: '₹୨,୦୦୦ ପର୍ଯ୍ୟନ୍ତ ୦% (Nil MDR)। ₹୨,୦୦୦ ଉପରେ ସାଧାରଣ ~୨.୦% କ୍ରେଡିଟ୍ କାର୍ଡ MDR।',
+    card4Title: '୪. ଅତ୍ୟାବଶ୍ୟକ ସେବା ଓ ଇନ୍ଧନ',
+    card4Desc: 'ରେଳବାଇ, ପେଟ୍ରୋଲ, ଟେଲିକମ୍ ପାଇଁ ₹୨,୦୦୦ ଉପରେ ଫ୍ଲାଟ୍ ₹୫ MDR, କୌଣସି ଶତକଡ଼ା ନୁହେଁ।',
+    card5Title: '୫. ପୁଞ୍ଜି ବଜାର ଓ ମ୍ୟୁଚୁଆଲ୍ ଫଣ୍ଡ',
+    card5Desc: 'ମ୍ୟୁଚୁଆଲ୍ ଫଣ୍ଡ ଏବଂ ଶେୟାର ବଜାର ପାଇଁ ମାତ୍ର ୦.୦୨% (ସର୍ବାଧିକ ₹୩୦୦ କ୍ୟାପ୍)।',
+    card6Title: '୬. କ୍ଷୁଦ୍ର ବ୍ୟବସାୟୀ (P2PM QR)',
+    card6Desc: 'ମାସିକ ≤ ₹୧ ଲକ୍ଷ ଗ୍ରହଣ କରୁଥିବା ଛୋଟ ଦୋକାନୀଙ୍କ ପାଇଁ ସବୁବେଳେ ୦% ମାଗଣା।',
+    lastVerified: 'ଶେଷ ଯାଞ୍ଚ ତାରିଖ: ୩୦ ସେପ୍ଟେମ୍ବର ୨୦୨୬',
+    officialSources: 'ସରକାରୀ ଓ ନିୟାମକ ଉତ୍ସ:',
+    source1: 'NPCI UPI ସର୍କୁଲାର୍ (ଅଫିସିଆଲ୍ ତାଲିକା)',
+    source2: 'ଆର୍ଥିକ ସେବା ବିଭାଗ (DFS) FAQ',
+    source3: 'ପ୍ରେସ୍ ଇନଫରମେସନ୍ ବ୍ୟୁରୋ (PIB)',
   },
   te: {
     appTitle: 'UPI MDR కాలిక్యులేటర్ (భారత్)',
@@ -135,6 +209,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'బ్యాంక్ MDR కటింగ్:',
     netShopCredit: 'షాపు యజమాని బ్యాంక్ ఖాతాలో జమ అయ్యే నికర మొత్తం:',
     whoBearsNotice: 'ఈ ఛార్జీని ఎవరు భరిస్తారు?',
+    step3Title: 'అధికారిక గణన మార్గాలు & సాధనాల నిబంధనలు',
+    card1Title: '1. P2P (వ్యక్తి నుండి వ్యక్తికి బదిలీ)',
+    card1Desc: 'ఏ మొత్తానికైనా ₹0 MDR. స్నేహితులు, కుటుంబ సభ్యులకు పంపే నగదు బదిలీలకు 100% ఉచితం.',
+    card2Title: '2. సాధారణ వ్యాపారి (బ్యాంక్ UPI)',
+    card2Desc: '≤ ₹2,000 → ₹0. ₹2,000 దాటితే 0.40% (గరిష్ట పరిమితి ₹300).',
+    card3Title: '3. రూపే క్రెడిట్ కార్డ్ UPI',
+    card3Desc: '≤ ₹2,000 & చిన్న వ్యాపారులకు Nil MDR (0%). ₹2,000 దాటితే ~2.0% క్రెడిట్ కార్డ్ MDR.',
+    card4Title: '4. నిత్యావసరాలు & ఇంధనం',
+    card4Desc: 'రైల్వేలు, పెట్రోల్, టెలికాం రంగానికి ₹2,000 దాటినప్పుడు ఫ్లాట్ ₹5 MDR మాత్రమే.',
+    card5Title: '5. క్యాపిటల్ మార్కెట్లు',
+    card5Desc: 'మ్యూచువల్ ఫండ్స్, షేర్లకు కేవలం 0.02% MDR (గరిష్ట పరిమితి ₹300).',
+    card6Title: '6. చిన్న వ్యాపారులు (P2PM QR)',
+    card6Desc: 'నెలకు ≤ ₹1 లక్ష UPI QR ద్వారా అందుకునే చిన్న దుకాణదారులకు ఎప్పటికీ 0% ఉచితం!',
     lastVerified: 'నిబంధనలు ధృవీకరించిన తేదీ: 30 సెప్టెంబర్ 2026',
     officialSources: 'అధికారిక ప్రభుత్వ & నియంత్రణ వనరులు:',
     source1: 'NPCI UPI సర్క్యులర్లు (అధికారిక జాబితా)',
@@ -184,6 +271,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'बैंक MDR कटौती:',
     netShopCredit: 'दुकानदार के बैंक खाते में जमा शुद्ध राशि:',
     whoBearsNotice: 'यह शुल्क कौन वहन करता है?',
+    step3Title: 'आधिकारिक गणना मार्ग एवं नियम',
+    card1Title: '1. P2P (व्यक्ति से व्यक्ति ट्रांसफर)',
+    card1Desc: 'किसी भी राशि पर ₹0 MDR। दोस्तों या परिवार को पैसे भेजना 100% मुफ़्त है।',
+    card2Title: '2. सामान्य व्यापारी (बैंक यूपीआई)',
+    card2Desc: '₹2,000 तक → ₹0। ₹2,000 से अधिक पर 0.40% (अधिकतम सीमा ₹300)।',
+    card3Title: '3. रुपे क्रेडिट कार्ड ऑन यूपीआई',
+    card3Desc: '₹2,000 तक और छोटे व्यापारियों को 0% Nil MDR। ₹2,000 से अधिक पर ~2.0% MDR।',
+    card4Title: '4. आवश्यक सेवाएं एवं ईंधन',
+    card4Desc: 'पेट्रोल, रेलवे, टेलीकॉम पर ₹2,000 से अधिक लेनदेन पर केवल फ्लैट ₹5 MDR।',
+    card5Title: '5. शेयर बाजार व म्यूचुअल फंड',
+    card5Desc: 'म्यूचुअल फंड और शेयरों पर केवल 0.02% MDR (अधिकतम ₹300 सीमा)।',
+    card6Title: '6. छोटे व्यापारी (P2PM QR)',
+    card6Desc: 'प्रति माह ≤ ₹1 लाख तक लेने वाले छोटे दुकानदारों को हमेशा 0% मुफ़्त।',
     lastVerified: 'अंतिम सत्यापन: 30 सितंबर 2026',
     officialSources: 'आधिकारिक सरकारी और नियामक स्रोत:',
     source1: 'NPCI UPI परिपत्र (आधिकारिक सूची)',
@@ -233,6 +333,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'बँक MDR कपात:',
     netShopCredit: 'दुकानदाराच्या खात्यात जमा झालेली रक्कम:',
     whoBearsNotice: 'हे शुल्क कोण भरते?',
+    step3Title: 'अधिकृत गणना पद्धती आणि नियम',
+    card1Title: '1. P2P (व्यक्ती ते व्यक्ती)',
+    card1Desc: 'कोणत्याही रकमेसाठी ₹0 MDR. मित्र किंवा कुटुंबाला पैसे पाठवणे 100% मोफत.',
+    card2Title: '2. सामान्य व्यापारी (बँक UPI)',
+    card2Desc: '≤ ₹2,000 → ₹0. ₹2,000 च्या वर 0.40% (कमाल मर्यादा ₹300).',
+    card3Title: '3. रुपे क्रेडिट कार्ड UPI',
+    card3Desc: '≤ ₹2,000 पर्यंत Nil MDR (0%). ₹2,000 च्या वर ~2.0% क्रेडिट कार्ड MDR.',
+    card4Title: '4. अत्यावश्यक सेवा आणि इंधन',
+    card4Desc: 'रेल्वे, पेट्रोल, टेलिकॉमसाठी ₹2,000 च्या वर फ्लॅट ₹5 MDR.',
+    card5Title: '5. भांडवली बाजार व म्युच्युअल फंड',
+    card5Desc: 'म्युच्युअल फंड आणि शेअर्सवर फक्त 0.02% (कमाल मर्यादा ₹300).',
+    card6Title: '6. लहान व्यापारी (P2PM QR)',
+    card6Desc: 'दरमहा ≤ ₹1 लाख स्वीकारणाऱ्या लहान व्यापाऱ्यांना कायम 0% मोफत.',
     lastVerified: 'अंतिम पडताळणी: 30 सप्टेंबर 2026',
     officialSources: 'अधिकृत सरकारी आणि नियामक स्रोत:',
     source1: 'NPCI UPI परिपत्रके (अधिकृत यादी)',
@@ -282,6 +395,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'બેંક MDR કપાત:',
     netShopCredit: 'વેપારી ખાતામાં જમા ચોખ્ખી રકમ:',
     whoBearsNotice: 'આ ફી કોણ ભોગવે છે?',
+    step3Title: 'સત્તાવાર ગણતરી માર્ગો અને નિયમો',
+    card1Title: '1. P2P (વ્યક્તિ થી વ્યક્તિ)',
+    card1Desc: 'કોઈપણ રકમ માટે ₹0 MDR. મિત્રો કે પરિવારને પૈસા મોકલવા 100% મફત છે.',
+    card2Title: '2. સામાન્ય વેપારી (બેંક UPI)',
+    card2Desc: '≤ ₹2,000 → ₹0. ₹2,000 થી વધુ પર 0.40% (મહત્તમ ₹300).',
+    card3Title: '3. રૂપે ક્રેડિટ કાર્ડ UPI',
+    card3Desc: '≤ ₹2,000 સુધી Nil MDR (0%). ₹2,000 થી વધુ પર ~2.0% ક્રેડિટ કાર્ડ MDR.',
+    card4Title: '4. આવશ્યક સેવાઓ અને ઇંધણ',
+    card4Desc: 'રેલવે, પેટ્રોલ, ટેલિકોમ માટે ₹2,000 થી વધુ પર ફ્લેટ ₹5 MDR.',
+    card5Title: '5. શેરબજાર અને મ્યુચ્યુઅલ ફંડ',
+    card5Desc: 'મ્યુચ્યુઅલ ફંડ અને શેર્સ પર માત્ર 0.02% (મહત્તમ ₹300).',
+    card6Title: '6. નાના વેપારીઓ (P2PM QR)',
+    card6Desc: 'દર મહિને ≤ ₹1 લાખ મેળવતા નાના દુકાનદારો માટે હંમેશા 0% મફત.',
     lastVerified: 'છેલ્લી ચકાસણી: 30 સપ્ટેમ્બર 2026',
     officialSources: 'સત્તાવાર સરકારી સ્ત્રોતો:',
     source1: 'NPCI UPI પરિપત્રો (સત્તાવાર યાદી)',
@@ -331,6 +457,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'வங்கி MDR பிடித்தம்:',
     netShopCredit: 'வணிகரின் வங்கி கணக்கில் சேரும் நிகர தொகை:',
     whoBearsNotice: 'இந்தக் கட்டணத்தை யார் ஏற்பது?',
+    step3Title: 'அதிகாரப்பூர்வ கணக்கீட்டு முறைகள் மற்றும் விதிகள்',
+    card1Title: '1. P2P (நபர் முதல் நபர் வரை)',
+    card1Desc: 'எந்தத் தொகைக்கும் ₹0 MDR. நண்பர்கள் அல்லது குடும்பத்தினருக்கு பணம் அனுப்புவது 100% இலவசம்.',
+    card2Title: '2. சாதாரண வணிகர் (வங்கி UPI)',
+    card2Desc: '≤ ₹2,000 → ₹0. ₹2,000க்கு மேல் 0.40% (அதிகபட்ச வரம்பு ₹300).',
+    card3Title: '3. ரூபே கிரெடிட் கார்டு UPI',
+    card3Desc: '≤ ₹2,000 வரை Nil MDR (0%). ₹2,000க்கு மேல் ~2.0% கிரெடிட் கார்டு MDR.',
+    card4Title: '4. அத்தியாவசிய சேவைகள் & எரிபொருள்',
+    card4Desc: 'ரயில்வே, பெட்ரோல், தொலைத்தொடர்புக்கு ₹2,000க்கு மேல் நிலையான ₹5 MDR மட்டுமே.',
+    card5Title: '5. பங்குச் சந்தை & மியூச்சுவல் ஃபண்ட்',
+    card5Desc: 'மியூச்சுவல் ஃபண்ட் மற்றும் பங்குகளுக்கு 0.02% மட்டுமே (அதிகபட்ச வரம்பு ₹300).',
+    card6Title: '6. சிறு வணிகர்கள் (P2PM QR)',
+    card6Desc: 'மாதம் ≤ ₹1 லட்சம் வரை பெறும் சிறு கடைகளுக்கு எப்போதும் 0% இலவசம்.',
     lastVerified: 'கடைசியாக சரிபார்க்கப்பட்டது: 30 செப்டம்பர் 2026',
     officialSources: 'அதிகாரப்பூர்வ அரசு மற்றும் ஒழுங்குமுறை ஆதாரங்கள்:',
     source1: 'NPCI UPI சுற்றறிக்கைகள் (அதிகாரப்பூர்வ பட்டியல்)',
@@ -380,60 +519,24 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'ব্যাংক MDR কর্তন:',
     netShopCredit: 'দোকানদারের ব্যাংক অ্যাকাউন্টে জমা হওয়া নিট পরিমাণ:',
     whoBearsNotice: 'এই চার্জ কে বহন করে?',
+    step3Title: 'অফিসিয়াল গণনার পথ এবং বিধিমালার নিয়ম',
+    card1Title: '১. P2P (ব্যক্তি থেকে ব্যক্তি)',
+    card1Desc: 'যেকোনো পরিমাণের জন্য ₹০ MDR। বন্ধু বা পরিবারকে টাকা পাঠানো ১০০% বিনামূল্যে।',
+    card2Title: '২. সাধারণ ব্যবসায়ী (ব্যাংক UPI)',
+    card2Desc: '≤ ₹২,০০০ → ₹০। ₹২,০০০ এর উপরে ০.৪০% (সর্বোচ্চ ₹৩০০)।',
+    card3Title: '৩. রুপে ক্রেডিট কার্ড UPI',
+    card3Desc: '≤ ₹২,০০০ পর্যন্ত Nil MDR (০%)। ₹২,০০০ এর উপরে ~২.০% ক্রেডিট কার্ড MDR।',
+    card4Title: '৪. জরুরি পরিষেবা ও জ্বালানি',
+    card4Desc: 'রেলওয়ে, পেট্রোল, টেলিকমের জন্য ₹২,০০০ এর উপরে ফ্ল্যাট ₹৫ MDR।',
+    card5Title: '৫. শেয়ার বাজার ও মিউচুয়াল ফান্ড',
+    card5Desc: 'মিউচুয়াল ফান্ড এবং শেয়ারের জন্য মাত্র ০.০২% (সর্বোচ্চ সীমা ₹৩০০)।',
+    card6Title: '৬. ক্ষুদ্র ব্যবসায়ী (P2PM QR)',
+    card6Desc: 'মাসে ≤ ₹১ লাখ গ্রহণকারী ছোট দোকানদারদের জন্য সর্বদা ০% বিনামূল্যে।',
     lastVerified: 'সর্বশেষ যাচাই: ৩০ সেপ্টেম্বর ২০২৬',
     officialSources: 'সরকারি ও নিয়ন্ত্রক সূত্র:',
     source1: 'NPCI UPI সার্কুলার (অফিসিয়াল তালিকা)',
     source2: 'আর্থিক পরিষেবা বিভাগ (DFS) FAQ',
     source3: 'প্রেস ইনফরমেশন ব্যুরো (PIB)',
-  },
-  or: {
-    appTitle: 'UPI MDR କ୍ୟାଲକୁଲେଟର ଭାରତ',
-    subtitle: 'ସ୍ୱତନ୍ତ୍ର ଶିକ୍ଷାମୂଳକ ସାଧନ • RBI, NPCI ଏବଂ ଅର୍ଥ ମନ୍ତ୍ରଣାଳୟ',
-    bannerTitle: 'ନୂତନ UPI MDR ନିୟମ — ୧୫ ଅକ୍ଟୋବର ୨୦୨୬ ରୁ ଲାଗୁ',
-    bannerSubtext: 'ନୂତନ ନିୟମ ୧୫ ଅକ୍ଟୋବର ୨୦୨୬ ରୁ ଲାଗୁ ହେବ। ୧୪ ଅକ୍ଟୋବର ୨୦୨୬ ପର୍ଯ୍ୟନ୍ତ ୦% MDR ଜାରି ରହିବ।',
-    viewNewRules: 'ନୂତନ ନିୟମ — ୧୫ ଅକ୍ଟୋବର ୨୦୨୬ ରୁ',
-    viewCurrentRules: 'ବର୍ତ୍ତମାନର ନିୟମ — ୧୪ ଅକ୍ଟୋବର ୨୦୨୬ ପର୍ଯ୍ୟନ୍ତ',
-    installApp: 'ଆପ୍ ଇନଷ୍ଟଲ କରନ୍ତୁ',
-    selectLanguage: 'ଭାଷା',
-    disclaimerBannerTitle: 'ସୂଚନା ଏବଂ ଶିକ୍ଷାମୂଳକ ଉଦ୍ଦେଶ୍ୟ ପାଇଁ',
-    disclaimerBannerText:
-      'ପ୍ରକୃତ ଶୁଳ୍କ ବ୍ୟବସାୟୀ ବର୍ଗ ଏବଂ NPCI ନିର୍ଦ୍ଦେଶାବଳୀ ଉପରେ ନିର୍ଭର କରେ। ଏହା କୌଣସି ସରକାରୀ ଟୁଲ୍ ନୁହେଁ।',
-    txnStepTitle: '୧. ପେମେଣ୍ଟ ବିବରଣୀ ପ୍ରବେଶ କରନ୍ତୁ',
-    amountLabel: 'ଦେୟ ରାଶି (₹ ରେ)',
-    amountPlaceholder: 'ରାଶି ଲେଖନ୍ତୁ',
-    txnTypeLabel: 'କାରବାର ପ୍ରକାର',
-    p2pPersonToPerson: 'P2P (ବ୍ୟକ୍ତିଗତ ସ୍ଥାନାନ୍ତର)',
-    p2mMerchant: 'P2M (ଦୋକାନୀ / ବ୍ୟବସାୟୀଙ୍କୁ ଦେୟ)',
-    paymentModeLabel: 'ପେମେଣ୍ଟ ମାଧ୍ୟମ',
-    modeBank: 'ବ୍ୟାଙ୍କ ଖାତା UPI (ମାନକ)',
-    modeRupayCC: 'ରୁପେ କ୍ରେଡିଟ୍ କାର୍ଡ UPI (RuPay CC)',
-    modeWallet: 'ୱାଲେଟ୍ / PPI (Paytm/PhonePe)',
-    merchantCatLabel: 'ବ୍ୟବସାୟୀ ବର୍ଗ',
-    catNormal: 'ସାଧାରଣ ବ୍ୟବସାୟୀ / ଦୋକାନ (୦.୪୦%, ସର୍ବାଧିକ ₹୩୦୦)',
-    catSmall: 'କ୍ଷୁଦ୍ର ବ୍ୟବସାୟୀ / P2PM QR (ମାସିକ ≤ ₹୧ ଲକ୍ଷ: ୦% ମାଗଣା)',
-    catEssential: 'ଅତ୍ୟାବଶ୍ୟକ ସେବା ଓ ଇନ୍ଧନ (ଫ୍ଲାଟ୍ ₹୫)',
-    catCapital: 'ପୁଞ୍ଜି ବଜାର, ମ୍ୟୁଚୁଆଲ୍ ଫଣ୍ଡ (୦.୦୨%, ସର୍ବାଧିକ ₹୩୦୦)',
-    formulaTitle: 'ଗଣନା ସୂତ୍ର (Calculation Formula)',
-    calculationsTitle: 'କାରବାର ରସିଦ ଏବଂ ଶୁଳ୍କ କିଏ ବହନ କରିବ?',
-    freeBadge: '୧୦୦% ମାଗଣା (₹୦ ଶୁଳ୍କ)',
-    feeBadge: 'ବ୍ୟବସାୟୀ MDR କଟାଯିବ',
-    boxCustomerPaid: 'ଗ୍ରାହକ ଦେଉଥିବା ରାଶି',
-    boxCustomerExtra: 'ଗ୍ରାହକ MDR',
-    boxZeroCustomer: '₹୦ (ସର୍ବଦା ମାଗଣା)',
-    boxCustomerDesc: 'ଗ୍ରାହକଙ୍କ ଠାରୁ କୌଣସି ଅତିରିକ୍ତ ଶୁଳ୍କ ନିଆଯିବ ନାହିଁ (Sec 10A PSS Act)',
-    boxBankMdr: 'ବ୍ୟବସାୟୀ MDR (ବ୍ୟାଙ୍କ କଟନ)',
-    boxMerchantGets: 'ବ୍ୟବସାୟୀଙ୍କ ବ୍ୟାଙ୍କରେ ଜମା',
-    receiptTitle: 'କାରବାର ରସିଦ ବିବରଣୀ',
-    customerScanned: 'ଗ୍ରାହକଙ୍କ ଖାତାରୁ କଟାଯାଇଥିବା ରାଶି:',
-    noExtraFee: 'ଗ୍ରାହକଙ୍କ ପାଇଁ କୌଣସି ଅତିରିକ୍ତ ଶୁଳ୍କ ନାହିଁ',
-    bankDeduction: 'ବ୍ୟାଙ୍କ MDR କଟନ:',
-    netShopCredit: 'ବ୍ୟବସାୟୀଙ୍କ ଖାତାରେ ଜମା ହେବାକୁ ଥିବା ନିଟ୍ ରାଶି:',
-    whoBearsNotice: 'ଏହି ଶୁଳ୍କ କିଏ ବହନ କରେ?',
-    lastVerified: 'ଶେଷ ଯାଞ୍ଚ: ୩୦ ସେପ୍ଟେମ୍ବର ୨୦୨୬',
-    officialSources: 'ସରକାରୀ ଓ ନିୟାମକ ଉତ୍ସ:',
-    source1: 'NPCI UPI ସର୍କୁଲାର୍ (ଅଫିସିଆଲ୍ ତାଲିକା)',
-    source2: 'ଆର୍ଥିକ ସେବା ବିଭାଗ (DFS) FAQ',
-    source3: 'ପ୍ରେସ୍ ଇନଫରମେସନ୍ ବ୍ୟୁରୋ (PIB)',
   },
   kn: {
     appTitle: 'UPI MDR ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಭಾರತ',
@@ -478,6 +581,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, any> = {
     bankDeduction: 'ಬ್ಯಾಂಕ್ MDR ಕಡಿತ:',
     netShopCredit: 'ವ್ಯಾಪಾರಿಯ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೆಯಾಗುವ ನಿವ್ವಳ ಮೊತ್ತ:',
     whoBearsNotice: 'ಈ ಶುಲ್ಕವನ್ನು ಯಾರು ಭರಿಸುತ್ತಾರೆ?',
+    step3Title: 'ಅಧಿಕೃತ ಲೆಕ್ಕಾಚಾರ ವಿಧಾನಗಳು ಮತ್ತು ನಿಯಮಗಳು',
+    card1Title: '1. P2P (ವ್ಯಕ್ತಿಯಿಂದ ವ್ಯಕ್ತಿಗೆ)',
+    card1Desc: 'ಯಾವುದೇ ಮೊತ್ತಕ್ಕೆ ₹0 MDR. ಸ್ನೇಹಿತರಿಗೆ ಅಥವಾ ಕುಟುಂಬಕ್ಕೆ ಹಣ ಕಳುಹಿಸುವುದು 100% ಉಚಿತ.',
+    card2Title: '2. ಸಾಮಾನ್ಯ ವ್ಯಾಪಾರಿ (ಬ್ಯಾಂಕ್ UPI)',
+    card2Desc: '≤ ₹2,000 → ₹0. ₹2,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಮೊತ್ತಕ್ಕೆ 0.40% (ಗರಿಷ್ಠ ಮಿತಿ ₹300).',
+    card3Title: '3. ರೂಪೇ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ UPI',
+    card3Desc: '≤ ₹2,000 ವರೆಗೆ Nil MDR (0%). ₹2,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಮೊತ್ತಕ್ಕೆ ~2.0% ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ MDR.',
+    card4Title: '4. ಅಗತ್ಯ ಸೇವೆಗಳು & ಇಂಧನ',
+    card4Desc: 'ರೈಲ್ವೆ, ಪೆಟ್ರೋಲ್, ಟೆಲಿಕಾಂಗೆ ₹2,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಮೊತ್ತಕ್ಕೆ ಫ್ಲಾಟ್ ₹5 MDR.',
+    card5Title: '5. ಬಂಡವಾಳ ಮಾರುಕಟ್ಟೆ & ಮ್ಯೂಚುಯಲ್ ಫಂಡ್',
+    card5Desc: 'ಮ್ಯೂಚುಯಲ್ ಫಂಡ್ ಮತ್ತು ಷೇರುಗಳಿಗೆ ಕೇವಲ 0.02% (ಗರಿಷ್ಠ ಮಿತಿ ₹300).',
+    card6Title: '6. ಸಣ್ಣ ವ್ಯಾಪಾರಿಗಳು (P2PM QR)',
+    card6Desc: 'ತಿಂಗಳಿಗೆ ≤ ₹1 ಲಕ್ಷ ಸ್ವೀಕರಿಸುವ ಸಣ್ಣ ವ್ಯಾಪಾರಿಗಳಿಗೆ ಯಾವಾಗಲೂ 0% ಉಚಿತ.',
     lastVerified: 'ಕೊನೆಯ ಪರಿಶೀಲನೆ: 30 ಸೆಪ್ಟೆಂಬರ್ 2026',
     officialSources: 'ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಮತ್ತು ನಿಯಂತ್ರಕ ಮೂಲಗಳು:',
     source1: 'NPCI UPI ಸುತ್ತೋಲೆಗಳು (ಅಧಿಕೃತ ಪಟ್ಟಿ)',
@@ -593,7 +709,7 @@ export function App() {
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 text-xs font-black text-white shadow-xs transition cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 text-xs font-black text-white shadow-2xs transition cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 {t.installApp}
@@ -609,7 +725,7 @@ export function App() {
               >
                 {LANGUAGES.map((item) => (
                   <option key={item.code} value={item.code} className="text-slate-900 bg-white font-medium">
-                    {item.nativeName} ({item.name})
+                    {item.nativeName} — {item.name}
                   </option>
                 ))}
               </select>
@@ -617,7 +733,7 @@ export function App() {
           </div>
         </div>
 
-        {/* 1-Tap Language Quick Switcher Bar */}
+        {/* 1-Tap Language Quick Switcher Bar with clear Odia / Oriya badge */}
         <div className="border-t border-white/10 bg-black/20 px-4 py-1.5 overflow-x-auto no-scrollbar">
           <div className="mx-auto flex max-w-5xl items-center gap-1.5 text-xs">
             <span className="text-[11px] font-bold text-blue-300 mr-1 shrink-0 hidden sm:inline">
@@ -684,7 +800,7 @@ export function App() {
         </div>
       </div>
 
-      {/* 3. PROMINENT EDUCATIONAL DISCLAIMER (User Recommendation #3) */}
+      {/* 3. PROMINENT EDUCATIONAL DISCLAIMER */}
       <div className="border-b border-blue-200 bg-blue-50/70 px-4 py-2.5 text-blue-950 text-xs">
         <div className="mx-auto max-w-5xl flex items-start gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
@@ -742,7 +858,7 @@ export function App() {
               </div>
             )}
 
-            {/* Quick Boundary Preset Helper Buttons (User Requirement #5 validation) */}
+            {/* Quick Boundary Preset Helper Buttons */}
             <div className="flex flex-wrap items-center justify-between text-xs gap-2 pt-0.5">
               <div className="flex items-center gap-1.5 font-bold">
                 {result.amount > 0 && result.amount <= 2000 ? (
@@ -759,7 +875,7 @@ export function App() {
               </div>
 
               <div className="flex flex-wrap items-center gap-1 text-[11px] text-slate-500 font-medium">
-                <span className="font-bold text-slate-700">Test Preset:</span>
+                <span className="font-bold text-slate-700">Preset:</span>
                 <button
                   type="button"
                   onClick={() => setAmountInput('100')}
@@ -813,7 +929,7 @@ export function App() {
             </div>
           </div>
 
-          {/* Transaction Type: P2P (Friend/Family) vs P2M (Shop/Merchant) */}
+          {/* Transaction Type: P2P vs P2M */}
           <div className="pt-2">
             <label className="block text-xs font-extrabold uppercase text-slate-500 mb-1.5">
               {t.txnTypeLabel}
@@ -1021,12 +1137,12 @@ export function App() {
                 </span>
               </div>
               <div className="shrink-0 rounded-xl bg-white/10 px-3 py-1 text-xs font-black text-blue-200 border border-white/20">
-                {result.paymentInstrumentLabelEn}
+                {categoryTag}
               </div>
             </div>
           </div>
 
-          {/* TRANSPARENT STEP-BY-STEP CALCULATION FORMULA (User Recommendation #4) */}
+          {/* TRANSPARENT STEP-BY-STEP CALCULATION FORMULA */}
           <div className="rounded-2xl border-2 border-indigo-200 bg-indigo-50/70 p-4 space-y-1">
             <div className="flex items-center justify-between text-xs text-indigo-900 font-black">
               <span className="flex items-center gap-1.5 uppercase tracking-wider">
@@ -1135,7 +1251,7 @@ export function App() {
                 {'📋 ' + t.receiptTitle + ':'}
               </span>
               <span className="text-[11px] font-extrabold text-blue-800">
-                {result.whoBearsFeeEn}
+                {lang === 'te' ? result.whoBearsFeeTe : result.whoBearsFeeEn}
               </span>
             </div>
 
@@ -1164,7 +1280,7 @@ export function App() {
                     ? '(Flat ₹5 for essential services)'
                     : result.mdrCapApplied
                     ? `(Capped at ₹${result.mdrCapAmount})`
-                    : `(${result.applicableMdrRatePercent}% ecosystem fee)`}
+                    : `(${result.applicableMdrRatePercent}% fee)`}
                 </span>
               </div>
 
@@ -1184,13 +1300,13 @@ export function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* STEP 3: OFFICIAL 5 CALCULATION PATHS (AT A GLANCE)                        */}
+        {/* STEP 3: OFFICIAL CALCULATION PATHS (100% TRANSLATED IN ALL LANGUAGES)      */}
         {/* ========================================================================= */}
         <section className="rounded-3xl border-2 border-slate-200 bg-white p-5 sm:p-6 space-y-4 shadow-2xs">
           <div className="flex items-center gap-2 text-slate-900 font-black">
             <ShieldCheck className="w-5 h-5 text-blue-700" />
             <h3 className="text-sm sm:text-base">
-              The Official Calculation Paths & Payment Instrument Rules
+              {t.step3Title}
             </h3>
           </div>
 
@@ -1198,67 +1314,67 @@ export function App() {
             <div className="rounded-2xl bg-slate-50 p-3.5 border border-slate-200 space-y-1">
               <span className="font-black text-emerald-800 block flex items-center gap-1">
                 <User className="w-3.5 h-3.5 text-emerald-600" />
-                1. P2P (Person to Person)
+                {t.card1Title}
               </span>
-              <p className="text-slate-600">
-                <strong>₹0 MDR at any amount.</strong> Sending ₹1,000, ₹10,000 or ₹1 Lakh to friends or family is 100% free with zero fees.
+              <p className="text-slate-600 leading-relaxed">
+                {t.card1Desc}
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-3.5 border border-slate-200 space-y-1">
               <span className="font-black text-blue-900 block flex items-center gap-1">
                 <Store className="w-3.5 h-3.5 text-blue-600" />
-                2. Normal P2M Merchant (Bank UPI)
+                {t.card2Title}
               </span>
-              <p className="text-slate-600">
-                <strong>≤ ₹2,000 → ₹0.</strong> Above ₹2,000 → <strong>0.40%</strong> on total amount, capped at ₹300 (at ₹75,000+).
+              <p className="text-slate-600 leading-relaxed">
+                {t.card2Desc}
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-3.5 border border-slate-200 space-y-1">
               <span className="font-black text-purple-900 block flex items-center gap-1">
                 <CreditCard className="w-3.5 h-3.5 text-purple-600" />
-                3. RuPay Credit Card on UPI
+                {t.card3Title}
               </span>
-              <p className="text-slate-600">
-                <strong>≤ ₹2,000 & Small Vendors → Nil MDR (0%).</strong> Above ₹2,000 at regular merchants → <strong>~2.0%</strong> standard credit card MDR.
+              <p className="text-slate-600 leading-relaxed">
+                {t.card3Desc}
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-3.5 border border-slate-200 space-y-1">
               <span className="font-black text-amber-900 block flex items-center gap-1">
                 <Fuel className="w-3.5 h-3.5 text-amber-600" />
-                4. Essential / Fuel / Railways
+                {t.card4Title}
               </span>
-              <p className="text-slate-600">
-                Railways, telecom, fuel, insurance, and utilities pay a <strong>Flat ₹5 MDR</strong> above ₹2,000, NOT a percentage (e.g. ₹10,000 fuel = ₹5 fee).
+              <p className="text-slate-600 leading-relaxed">
+                {t.card4Desc}
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-3.5 border border-slate-200 space-y-1">
               <span className="font-black text-indigo-900 block flex items-center gap-1">
                 <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
-                5. Capital Markets
+                {t.card5Title}
               </span>
-              <p className="text-slate-600">
-                Mutual funds, stocks, and securities pay only <strong>0.02%</strong> (Capped at ₹300). E.g. ₹10,000 payment = ₹2 MDR.
+              <p className="text-slate-600 leading-relaxed">
+                {t.card5Desc}
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-3.5 border border-slate-200 space-y-1">
               <span className="font-black text-emerald-900 block flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                6. Small Merchants (P2PM QR)
+                {t.card6Title}
               </span>
-              <p className="text-slate-600">
-                Small shops & street vendors receiving <strong>≤ ₹1 Lakh/month</strong> via UPI QR continue to get <strong>0% Zero MDR</strong> on all transactions!
+              <p className="text-slate-600 leading-relaxed">
+                {t.card6Desc}
               </p>
             </div>
           </div>
         </section>
 
         {/* ========================================================================= */}
-        {/* STEP 4: VERIFIED REGULATORY CITATIONS & SOURCES (User Requirement #6)      */}
+        {/* STEP 4: VERIFIED REGULATORY CITATIONS & SOURCES                           */}
         {/* ========================================================================= */}
         <section className="rounded-2xl border border-slate-200 bg-slate-100/90 p-4 text-xs space-y-2 text-slate-700">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[11px] font-bold text-slate-800 border-b border-slate-200 pb-2">
