@@ -1,9 +1,5 @@
 /**
  * Official UPI Framework Type Definitions
- * Strictly aligned with:
- * 1. RBI Notification on Zero MDR (Section 10A Payment and Settlement Systems Act)
- * 2. NPCI UPI Circulars & FAQs on PPI-on-UPI Interchange
- * 3. NPCI RuPay Credit Card on UPI Operating Circulars
  * Sourced: Current 2026 Regulatory Status.
  */
 
@@ -12,15 +8,15 @@ export type TransactionType = 'P2P' | 'P2M';
 export type SupportedLanguage = 'en' | 'te' | 'hi' | 'mr' | 'gu' | 'ta' | 'bn' | 'or' | 'kn';
 
 export type PaymentInstrument =
-  | 'bank_account' // Standard Bank-to-Bank Account UPI (Zero MDR under Sec 10A PSS Act)
-  | 'ppi_wallet' // Prepaid Payment Instruments / Wallets on UPI (NPCI Interchange Circular)
-  | 'rupay_credit_card'; // RuPay Credit Card linked on UPI (NPCI Operating Circular)
+  | 'bank_account'
+  | 'ppi_wallet'
+  | 'rupay_credit_card';
 
 export type MerchantCategoryKey =
-  | 'general_merchant' // Standard merchant / retail store
-  | 'small_offline_merchant' // Qualifying small offline merchant (P2PM QR / turnover ≤ ₹20L)
-  | 'fuel_and_utilities' // Fuel stations, utility bills, railway bookings
-  | 'capital_markets' // Mutual funds, stockbrokers, securities (SEBI / Bank UPI mandatory)
+  | 'general_merchant'
+  | 'small_offline_merchant'
+  | 'fuel_and_utilities'
+  | 'capital_markets'
   | 'regular_merchant'
   | 'small_merchant'
   | 'essential_services';
@@ -59,22 +55,19 @@ export interface CalculationResult {
   merchantCategoryLabelEn?: string;
   merchantCategoryLabelTe?: string;
   
-  // Customer Side (Always ₹0 extra across all UPI instruments)
-  customerCharge: number; // 0
+  customerCharge: number;
   customerTotalPays: number;
   
-  // Ecosystem / Regulatory / Acquirer Side
   isMdrLegallyZero: boolean;
-  statutoryMdrPercent: number; // 0% for bank account UPI
+  statutoryMdrPercent: number;
   statutoryMdrAmount: number;
   
-  // Interchange / Commercial Acquirer Side
   hasEcosystemInterchange: boolean;
   interchangeRatePercent: number;
   estimatedInterchangeAmount: number;
   isSmallMerchantExempt: boolean;
   
-  // Optional backward compatibility fields
+  // Optional backward compatibility
   isMdrApplicable?: boolean;
   applicableMdrRatePercent?: number;
   estimatedMdr?: number;
@@ -98,25 +91,4 @@ export interface CalculationResult {
   officialCircularNoticeEn: string;
   officialCircularNoticeTe: string;
   validationWarning?: string;
-}
-
-export interface MerchantProjectionInput {
-  averageAmount: number | string;
-  dailyTransactions: number | string;
-  businessDaysPerMonth: number | string;
-  merchantCategory: MerchantCategoryKey;
-  paymentInstrument?: PaymentInstrument;
-  evaluationDate?: string;
-}
-
-export interface MerchantProjectionResult {
-  monthlyTransactions: number;
-  monthlySalesVolume: number;
-  transactionsSubjectToMdr: number;
-  applicableMdrRatePercent: number;
-  estimatedMdrPerTransaction: number;
-  estimatedMonthlyMdr: number;
-  estimatedAnnualMdr: number;
-  estimatedNetMonthlySettlement: number;
-  isMdrApplicable: boolean;
 }
