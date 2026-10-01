@@ -1,12 +1,9 @@
 /**
  * Calculation Engine for UPI Transactions
- * Strictly aligns with verified official regulations:
- * 1. Bank Account UPI: Section 10A PSS Act Statutory Zero-MDR directive (0% MDR / ₹0 customer charge).
- * 2. PPI Wallet on UPI: NPCI March 2023 Circular on PPI Interchange (Ecosystem fee / ₹0 customer charge).
- * 3. RuPay Credit Card on UPI: NPCI Operating Circular (Nil MDR ≤ ₹2,000 for small merchants / Acquirer pricing).
+ * Strictly aligns with verified official regulations.
  */
 
-import { REGULATORY_FRAMEWORKS, UPI_REGULATORY_META } from '../rules/upiRules';
+import { REGULATORY_FRAMEWORKS } from '../rules/upiRules';
 import {
   CalculationInput,
   CalculationResult,
@@ -33,7 +30,6 @@ export function roundToDecimals(value: number, decimals = 2): number {
 }
 
 export function calculateUpiMdr(input: CalculationInput): CalculationResult {
-  // Input sanitization and safety
   let parsedAmount = typeof input.amount === 'string' ? parseFloat(input.amount) : input.amount;
   let validationWarning: string | undefined = undefined;
 
@@ -50,13 +46,7 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
   const category: MerchantCategoryKey = input.merchantCategory || 'general_merchant';
   const meta = REGULATORY_FRAMEWORKS[instrument];
 
-  // Customer charge is ALWAYS ₹0 for all UPI transactions in India
-  const customerCharge = 0;
-  const customerTotalPays = safeAmount;
-
-  // -----------------------------------------------------------------
-  // 1. P2P TRANSFERS (Person to Person) - 100% Free
-  // -----------------------------------------------------------------
+  // 1. P2P TRANSFERS (100% Free)
   if (input.transactionType === 'P2P') {
     return {
       amount: safeAmount,
@@ -85,9 +75,7 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
     };
   }
 
-  // -----------------------------------------------------------------
   // 2. STANDARD BANK-ACCOUNT UPI (Section 10A PSS Act: ZERO MDR)
-  // -----------------------------------------------------------------
   if (instrument === 'bank_account') {
     return {
       amount: safeAmount,
@@ -120,9 +108,7 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
     };
   }
 
-  // -----------------------------------------------------------------
   // 3. PREPAID WALLET / PPI ON UPI (NPCI Interchange Framework)
-  // -----------------------------------------------------------------
   if (instrument === 'ppi_wallet') {
     const isExempt = safeAmount <= 2000 || category === 'small_offline_merchant';
     const ratePercent = isExempt ? 0 : category === 'fuel_and_utilities' ? 0.50 : 1.10;
@@ -173,12 +159,8 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
     };
   }
 
-  // -----------------------------------------------------------------
   // 4. RUPAY CREDIT CARD ON UPI (NPCI Operating Circular)
-  // -----------------------------------------------------------------
-  // RuPay Credit Card on UPI
   const isSmallOfflineExempt = category === 'small_offline_merchant' || safeAmount <= 2000;
-  // Indicative commercial credit card acquiring MDR rate (typically ~1.75% to 2.0%)
   const indicativeCommercialMdrRate = isSmallOfflineExempt ? 0 : 2.0;
   const estimatedCommercialMdr = roundToDecimals((safeAmount * indicativeCommercialMdrRate) / 100, 2);
 
