@@ -1,6 +1,9 @@
 /**
  * Calculation Engine for UPI Transactions
- * Strictly aligns with verified official regulations.
+ * Strictly aligns with verified official regulations:
+ * 1. Bank Account UPI: Section 10A PSS Act Statutory Zero-MDR directive (0% MDR / ₹0 customer charge / 100% merchant settlement).
+ * 2. PPI Wallet on UPI: NPCI March 2023 Circular on PPI Interchange (Ecosystem fee between acquirer and issuer; ₹0 customer charge; merchant settlement governed by acquirer agreement).
+ * 3. RuPay Credit Card on UPI: NPCI Operating Circular (Nil MDR strictly for qualifying small offline merchants ≤ ₹2,000; commercial acquirer pricing for others; ₹0 customer surcharge).
  */
 
 import { REGULATORY_FRAMEWORKS } from '../rules/upiRules';
@@ -46,6 +49,10 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
   const category: MerchantCategoryKey = input.merchantCategory || 'general_merchant';
   const meta = REGULATORY_FRAMEWORKS[instrument];
 
+  // Customer charge is ALWAYS ₹0 for all UPI transactions in India
+  const customerCharge = 0;
+  const customerTotalPays = safeAmount;
+
   // 1. P2P TRANSFERS (100% Free)
   if (input.transactionType === 'P2P') {
     return {
@@ -63,10 +70,15 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
       interchangeRatePercent: 0,
       estimatedInterchangeAmount: 0,
       isSmallMerchantExempt: false,
+      applicableMdrDisplayEn: '₹0 (100% Free)',
+      applicableMdrDisplayTe: '₹0 (100% ఉచితం)',
+      isSettlementDeterminedByAcquirer: false,
+      estimatedMerchantSettlement: safeAmount,
+      merchantSettlementDisplayEn: `${formattedAmount} (Full bank credit)`,
+      merchantSettlementDisplayTe: `${formattedAmount} (పూర్తి మొత్తం జమ)`,
       formulaText: `${formattedAmount} (P2P Transfer) → 100% Free = ₹0.00`,
       whoBearsFeeEn: 'Both sender and receiver pay ₹0. Person-to-Person UPI is 100% free by law.',
       whoBearsFeeTe: 'పంపేవారికి మరియు స్వీకరించేవారికి 100% ఉచితం. ఎటువంటి ఛార్జీలు ఉండవు.',
-      estimatedMerchantSettlement: safeAmount,
       commercialSettlementDisclaimerEn: 'P2P transfers are direct bank-to-bank credits with zero charges.',
       commercialSettlementDisclaimerTe: 'P2P లావాదేవీలకు ఎటువంటి కోతలు ఉండవు.',
       officialCircularNoticeEn: 'RBI & NPCI UPI Core Operating Principles (P2P zero-charge directive).',
@@ -93,17 +105,22 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
       interchangeRatePercent: 0,
       estimatedInterchangeAmount: 0,
       isSmallMerchantExempt: false,
+      applicableMdrDisplayEn: '0% Statutory Zero-MDR (Section 10A PSS Act)',
+      applicableMdrDisplayTe: '0% MDR (సెక్షన్ 10A PSS చట్టం ప్రకారం ఉచితం)',
+      isSettlementDeterminedByAcquirer: false,
+      estimatedMerchantSettlement: safeAmount,
+      merchantSettlementDisplayEn: `${formattedAmount} (100% settled to merchant account)`,
+      merchantSettlementDisplayTe: `${formattedAmount} (వ్యాపారి ఖాతాలో 100% జమ అవుతుంది)`,
       formulaText: `${formattedAmount} (Bank Account UPI) → Statutory 0% MDR = ₹0.00`,
       whoBearsFeeEn: 'Both Customer and Merchant bear ₹0 MDR under Section 10A of the PSS Act.',
       whoBearsFeeTe: 'సెక్షన్ 10A PSS చట్టం ప్రకారం కస్టమర్ మరియు వ్యాపారి ఇద్దరికీ ₹0 MDR.',
-      estimatedMerchantSettlement: safeAmount,
       commercialSettlementDisclaimerEn:
-        'Under Government of India and RBI directives, no MDR is charged for bank-account UPI. The merchant receives 100% of the funds.',
+        'Under Government of India and RBI directives (Section 10A PSS Act), no MDR is charged for bank-account UPI. The merchant receives 100% of the funds.',
       commercialSettlementDisclaimerTe:
         'భారత ప్రభుత్వ నిబంధనల ప్రకారం బ్యాంక్ UPI కి 0% MDR. వ్యాపారికి పూర్తి మొత్తం అందుతుంది.',
       officialCircularNoticeEn:
-        'Payment and Settlement Systems Act (Section 10A) & Ministry of Finance Zero-MDR Notification.',
-      officialCircularNoticeTe: 'ఆర్థిక మంత్రిత్వ శాఖ జీరో-MDR ఉత్తర్వులు.',
+        'Payment and Settlement Systems Act (Section 10A) & RBI Notification DPSS.CO.PD No.1164/02.14.003/2019-20.',
+      officialCircularNoticeTe: 'ఆర్థిక మంత్రిత్వ శాఖ & RBI జీరో-MDR ఉత్తర్వులు.',
       validationWarning,
     };
   }
@@ -119,10 +136,10 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
       formulaText = safeAmount === 0
         ? `₹0.00 × 0% = ₹0.00`
         : safeAmount <= 2000
-        ? `${formattedAmount} ≤ ₹2,000 threshold (Wallet on UPI) → 0% Nil Fee = ₹0.00`
+        ? `${formattedAmount} ≤ ₹2,000 threshold (Wallet on UPI) → 0% Ecosystem Interchange = ₹0.00`
         : `${formattedAmount} (Small Offline Vendor Exemption) → 0% = ₹0.00`;
     } else {
-      formulaText = `${formattedAmount} × ${ratePercent}% (NPCI Ecosystem Interchange) = ${formatCurrencyINR(interchangeAmount, true)}`;
+      formulaText = `${formattedAmount} × ${ratePercent}% = ${formatCurrencyINR(interchangeAmount, true)} (Ecosystem Interchange)`;
     }
 
     return {
@@ -141,16 +158,29 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
       interchangeRatePercent: ratePercent,
       estimatedInterchangeAmount: interchangeAmount,
       isSmallMerchantExempt: isExempt,
+      applicableMdrDisplayEn: isExempt
+        ? '0% (Exempt from ecosystem interchange)'
+        : `${ratePercent}% Ecosystem Interchange (Paid between Acquirer & Wallet Issuer)`,
+      applicableMdrDisplayTe: isExempt
+        ? '0% (ఇంటర్‌ఛేంజ్ నుండి మినహాయింపు)'
+        : `${ratePercent}% ఇంటర్‌ఛేంజ్ (బ్యాంకుల మధ్య అంతర్గత రుసుము)`,
+      isSettlementDeterminedByAcquirer: !isExempt,
+      estimatedMerchantSettlement: isExempt ? safeAmount : null,
+      merchantSettlementDisplayEn: isExempt
+        ? `${formattedAmount} (₹0 ecosystem interchange for ≤ ₹2,000 / small vendor)`
+        : 'Governed by merchant\'s acquiring bank / payment aggregator agreement',
+      merchantSettlementDisplayTe: isExempt
+        ? `${formattedAmount} (₹2,000 లోపు ఇంటర్‌ఛేంజ్ ₹0)`
+        : 'వ్యాపారి బ్యాంక్ / పేమెంట్ గేట్‌వే ఒప్పందం ప్రకారం నిర్ణయించబడుతుంది',
       formulaText,
       whoBearsFeeEn: isExempt
         ? 'Customer and Merchant bear ₹0 fee for wallet transactions up to ₹2,000.'
-        : `Customer pays ₹0 extra. The ${formatCurrencyINR(interchangeAmount, true)} ecosystem interchange is paid between acquirer and wallet issuer.`,
+        : `Customer pays ₹0 extra. The ${formatCurrencyINR(interchangeAmount, true)} ecosystem interchange is an inter-provider fee paid between acquirer and wallet issuer. Merchant actual settlement depends on acquiring agreement.`,
       whoBearsFeeTe: isExempt
         ? '₹2,000 లోపు లావాదేవీలకు కస్టమర్ మరియు వ్యాపారికి ఎటువంటి ఛార్జీ ఉండదు.'
-        : `కస్టమర్‌కు ₹0 ఛార్జ్. ఇంటర్‌ఛేంజ్ రుసుము బ్యాంకుల మధ్య అంతర్గతంగా వర్తిస్తుంది.`,
-      estimatedMerchantSettlement: roundToDecimals(safeAmount - interchangeAmount, 2),
+        : `కస్టమర్‌కు ₹0 ఛార్జ్. ఇంటర్‌ఛేంజ్ రుసుము బ్యాంకుల మధ్య అంతర్గతంగా వర్తిస్తుంది. వ్యాపారికి అందే మొత్తం బ్యాంక్ ఒప్పందంపై ఆధారపడి ఉంటుంది.`,
       commercialSettlementDisclaimerEn:
-        'NPCI sets this interchange between payment providers. The merchant’s actual net payout is determined by their commercial contract with their acquiring bank or payment aggregator (e.g. blended rates).',
+        'NPCI sets this interchange between payment providers. The merchant’s actual net payout is determined by their commercial contract with their acquiring bank or payment aggregator (e.g. blended pricing model).',
       commercialSettlementDisclaimerTe:
         'ఇంటర్‌ఛేంజ్ అనేది బ్యాంకుల మధ్య రుసుము. వ్యాపారికి అందే నికర మొత్తం వారి పేమెంట్ గేట్‌వే ఒప్పందంపై ఆధారపడి ఉంటుంది.',
       officialCircularNoticeEn: 'NPCI Operating Circular on PPI Interchange on UPI (March 2023).',
@@ -160,17 +190,17 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
   }
 
   // 4. RUPAY CREDIT CARD ON UPI (NPCI Operating Circular)
-  const isSmallOfflineExempt = category === 'small_offline_merchant' || safeAmount <= 2000;
-  const indicativeCommercialMdrRate = isSmallOfflineExempt ? 0 : 2.0;
-  const estimatedCommercialMdr = roundToDecimals((safeAmount * indicativeCommercialMdrRate) / 100, 2);
+  const isQualifyingSmallOffline = category === 'small_offline_merchant' && safeAmount <= 2000;
 
   let formulaText = '';
-  if (isSmallOfflineExempt) {
+  if (isQualifyingSmallOffline) {
     formulaText = safeAmount === 0
       ? `₹0.00 × 0% = ₹0.00`
-      : `${formattedAmount} ≤ ₹2,000 (Small Merchant RuPay CC Exemption) → Nil MDR (0%) = ₹0.00`;
+      : `${formattedAmount} ≤ ₹2,000 (Qualifying Small Offline Merchant) → Nil MDR (0%) mandated by NPCI = ₹0.00`;
+  } else if (safeAmount <= 2000) {
+    formulaText = `${formattedAmount} (Standard/Online Merchant) → MDR determined by acquiring bank agreement (Nil MDR applies strictly to qualifying Small Offline Merchants)`;
   } else {
-    formulaText = `${formattedAmount} × ~2.00% (Indicative Credit Card Acquirer Pricing) = ${formatCurrencyINR(estimatedCommercialMdr, true)}`;
+    formulaText = `${formattedAmount} > ₹2,000 → MDR determined by acquiring bank agreement (NPCI circular references applicable RuPay interchange)`;
   }
 
   return {
@@ -182,27 +212,40 @@ export function calculateUpiMdr(input: CalculationInput): CalculationResult {
     merchantCategory: category,
     customerCharge: 0,
     customerTotalPays: safeAmount,
-    isMdrLegallyZero: isSmallOfflineExempt,
+    isMdrLegallyZero: isQualifyingSmallOffline,
     statutoryMdrPercent: 0,
     statutoryMdrAmount: 0,
-    hasEcosystemInterchange: !isSmallOfflineExempt,
-    interchangeRatePercent: indicativeCommercialMdrRate,
-    estimatedInterchangeAmount: estimatedCommercialMdr,
-    isSmallMerchantExempt: isSmallOfflineExempt,
+    hasEcosystemInterchange: false,
+    interchangeRatePercent: 0,
+    estimatedInterchangeAmount: 0,
+    isSmallMerchantExempt: isQualifyingSmallOffline,
+    applicableMdrDisplayEn: isQualifyingSmallOffline
+      ? '0% (Mandated Nil MDR for Small Offline Merchants ≤ ₹2,000)'
+      : 'Determined by acquiring bank / payment provider agreement',
+    applicableMdrDisplayTe: isQualifyingSmallOffline
+      ? '0% Nil MDR (చిన్న వ్యాపారులకు ₹2,000 వరకు ఉచితం)'
+      : 'బ్యాంక్ / పేమెంట్ గేట్‌వే ఒప్పందం ప్రకారం నిర్ణయించబడుతుంది',
+    isSettlementDeterminedByAcquirer: !isQualifyingSmallOffline,
+    estimatedMerchantSettlement: isQualifyingSmallOffline ? safeAmount : null,
+    merchantSettlementDisplayEn: isQualifyingSmallOffline
+      ? `${formattedAmount} (100% settled under NPCI Nil MDR mandate)`
+      : 'Determined by merchant\'s acquiring bank / payment provider agreement',
+    merchantSettlementDisplayTe: isQualifyingSmallOffline
+      ? `${formattedAmount} (Nil MDR కింద 100% జమ అవుతుంది)`
+      : 'వ్యాపారి బ్యాంక్ / పేమెంట్ గేట్‌వే ఒప్పందం ప్రకారం జమ అవుతుంది',
     formulaText,
-    whoBearsFeeEn: isSmallOfflineExempt
-      ? 'Nil MDR: Small merchant offline transactions up to ₹2,000 are 100% exempt from MDR under NPCI operating circular.'
-      : `Customer surcharge is strictly ₹0. Merchant commercial MDR is charged by acquiring bank/aggregator as per merchant agreement.`,
-    whoBearsFeeTe: isSmallOfflineExempt
+    whoBearsFeeEn: isQualifyingSmallOffline
+      ? 'Nil MDR: Qualifying small offline merchant transactions up to ₹2,000 are 100% exempt from MDR under NPCI operating circular.'
+      : 'Customer surcharge is strictly ₹0. Applicable merchant MDR is determined by agreement with acquiring bank/payment provider (NPCI circular references applicable RuPay interchange arrangements rather than establishing a universal 2% MDR).',
+    whoBearsFeeTe: isQualifyingSmallOffline
       ? 'చిన్న వ్యాపారులకు ₹2,000 వరకు Nil MDR (100% ఉచితం).'
-      : 'కస్టమర్‌కు ఎలాంటి సర్‌ఛార్జ్ ఉండదు. వ్యాపారికి వారి బ్యాంక్ ఒప్పందం ప్రకారం క్రెడిట్ కార్డ్ ఛార్జీలు వర్తిస్తాయి.',
-    estimatedMerchantSettlement: roundToDecimals(safeAmount - estimatedCommercialMdr, 2),
+      : 'కస్టమర్‌కు ఎలాంటి సర్‌ఛార్జ్ ఉండదు (₹0). వ్యాపారికి వర్తించే MDR వారి బ్యాంక్ ఒప్పందం ప్రకారం నిర్ణయించబడుతుంది.',
     commercialSettlementDisclaimerEn:
-      'NPCI mandates Nil MDR up to ₹2,000 for qualifying small merchants. For transactions > ₹2,000, commercial MDR is not a single government-fixed fee; it is set by the acquiring bank/payment provider (typically ~1.5% - 2.0%).',
+      'NPCI mandates Nil MDR up to ₹2,000 strictly for qualifying small offline merchants. For transactions > ₹2,000 or general merchants, MDR is not a statutory flat rate; it is determined by the merchant’s contract with their acquiring bank/provider.',
     commercialSettlementDisclaimerTe:
-      'చిన్న వ్యాపారులకు ₹2,000 వరకు Nil MDR తప్పనిసరి. ₹2,000 దాటితే వాస్తవ ఛార్జీలు బ్యాంక్ ఒప్పందం ప్రకారం ఉంటాయి (~1.5% - 2.0%).',
+      'చిన్న ఆఫ్లైన్ వ్యాపారులకు మాత్రమే ₹2,000 వరకు Nil MDR వర్తిస్తుంది. ఇతర లావాదేవీలకు బ్యాంక్ ఒప్పందం ప్రకారం ఛార్జీలు ఉంటాయి.',
     officialCircularNoticeEn:
-      'NPCI Operating Circular on RuPay Credit Card on UPI (Nil MDR for Small Merchants ≤ ₹2,000).',
+      'NPCI Operating Circular on RuPay Credit Card on UPI (Nil MDR for Small Offline Merchants ≤ ₹2,000).',
     officialCircularNoticeTe: 'NPCI రూపే క్రెడిట్ కార్డ్ UPI ఆపరేటింగ్ సర్క్యులర్.',
     validationWarning,
   };
