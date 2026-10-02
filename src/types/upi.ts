@@ -55,17 +55,39 @@ export interface CalculationResult {
   merchantCategoryLabelEn?: string;
   merchantCategoryLabelTe?: string;
   
+  // Customer Side (Always ₹0 extra across all UPI instruments)
   customerCharge: number;
   customerTotalPays: number;
   
+  // Ecosystem / Regulatory / Acquirer Side
   isMdrLegallyZero: boolean;
   statutoryMdrPercent: number;
   statutoryMdrAmount: number;
   
+  // Interchange / Commercial Acquirer Side
   hasEcosystemInterchange: boolean;
   interchangeRatePercent: number;
   estimatedInterchangeAmount: number;
   isSmallMerchantExempt: boolean;
+  
+  // Explicit Settlement & MDR Descriptions (avoiding misleading pseudo-subtractions)
+  applicableMdrDisplayEn: string;
+  applicableMdrDisplayTe: string;
+  isSettlementDeterminedByAcquirer: boolean;
+  estimatedMerchantSettlement: number | null;
+  merchantSettlementDisplayEn: string;
+  merchantSettlementDisplayTe: string;
+  
+  formulaText: string;
+  whoBearsFeeEn: string;
+  whoBearsFeeTe: string;
+  
+  commercialSettlementDisclaimerEn: string;
+  commercialSettlementDisclaimerTe: string;
+  
+  officialCircularNoticeEn: string;
+  officialCircularNoticeTe: string;
+  validationWarning?: string;
   
   // Optional backward compatibility
   isMdrApplicable?: boolean;
@@ -79,16 +101,4 @@ export interface CalculationResult {
   sourceNotice?: string;
   ruleEffectiveFrom?: string;
   ruleEffectiveUntil?: string | null;
-  
-  formulaText: string;
-  whoBearsFeeEn: string;
-  whoBearsFeeTe: string;
-  
-  estimatedMerchantSettlement: number;
-  commercialSettlementDisclaimerEn: string;
-  commercialSettlementDisclaimerTe: string;
-  
-  officialCircularNoticeEn: string;
-  officialCircularNoticeTe: string;
-  validationWarning?: string;
 }
